@@ -1,0 +1,624 @@
+Revision: 154
+Description: Moved scripts around
+Time: 2023-06-14 12:53 +0300
+-------
+Revision: 153
+Description: Working on splashtext and intro. Added new fonts and dialogcharacter stuff
+Time: 2023-06-13 15:56 +0300
+-------
+Revision: 152
+Description: Fixed bug with haste and AI can now use multitarget abilities correctly.
+Time: 2023-04-13 13:39 +0300
+-------
+Revision: 151
+Description: Major bug fixing. Movement is working again
+Time: 2023-04-12 12:10 +0300
+-------
+Revision: 150
+Description: Fixed bug with animation manager when animation was not finished before exiting combat.
+Fixed bug with AI.
+Fixed bug with Withdrawal talent.
+Time: 2023-03-24 15:56 +0200
+-------
+Revision: 149
+Description: Bug fixing, added onThink and OnForget effects for ideas
+Time: 2023-03-23 13:19 +0200
+-------
+Revision: 148
+Description: I don't know what I did, I have high fever
+Time: 2023-03-13 10:40 +0200
+-------
+Revision: 147
+Description: Fixing bugs in combat transitions and making talents work
+Time: 2023-02-25 12:16 +0200
+-------
+Revision: 146
+Description: Merged MenuCanvas to aftercombat buttons and added fight level options.
+Time: 2023-02-20 14:24 +0200
+-------
+Revision: 145
+Description: Camping, moving between combats
+Time: 2023-02-17 15:23 +0200
+-------
+Revision: 144
+Description: Talents implemented
+Time: 2023-02-04 17:01 +0200
+-------
+Revision: 143
+Description: Fixed error on npc turn card play. Renamed game mechanics.
+Time: 2023-01-25 15:03 +0200
+-------
+Revision: 142
+Description: Added elven language tools. Added search function for database. Replaced card terms with more psychological terms.
+Time: 2023-01-24 15:41 +0200
+-------
+Revision: 141
+Description: Moved DeveloperSettings
+Time: 2022-06-03 14:08 +0300
+-------
+Revision: 140
+Description: Fixing bugs
+Time: 2022-06-03 14:04 +0300
+-------
+Revision: 139
+Description: Aura Icons
+Time: 2022-05-31 13:09 +0300
+-------
+Revision: 138
+Description: Making cards
+Time: 2022-05-27 17:06 +0300
+-------
+Revision: 137
+Description: Making Cards
+Time: 2022-05-19 12:01 +0300
+-------
+Revision: 136
+Description: Making cards
+Time: 2022-05-11 10:43 +0300
+-------
+Revision: 135
+Description: Automating
+Time: 2022-05-04 16:06 +0300
+-------
+Revision: 134
+Description: Lot of refactoring
+Time: 2022-05-02 13:21 +0300
+-------
+Revision: 133
+Description: Special ACtion stuff
+Time: 2022-04-22 14:51 +0300
+-------
+Revision: 132
+Description: Bug Fixing
+Time: 2022-04-20 14:13 +0300
+-------
+Revision: 131
+Description: images
+Time: 2022-04-08 14:25 +0300
+-------
+Revision: 130
+Description: LoadingScreen
+Time: 2022-04-08 14:25 +0300
+-------
+Revision: 129
+Description: Combat Revamp
+Time: 2022-04-07 14:39 +0300
+-------
+Revision: 128
+Description: Game and Database improvements
+Time: 2022-03-30 17:14 +0300
+-------
+Revision: 127
+Description: CardHistory
+Time: 2022-03-25 14:03 +0200
+-------
+Revision: 126
+Description: Pantheon expanded, Card display when played
+Time: 2022-03-23 13:38 +0200
+-------
+Revision: 125
+Description: AI is working
+Time: 2022-03-22 14:34 +0200
+-------
+Revision: 124
+Description: AI is working on text level
+Time: 2022-03-21 13:32 +0200
+-------
+Revision: 123
+Description: Bug fixing
+Time: 2022-03-18 13:06 +0200
+-------
+Revision: 122
+Description: Card Art Importing and some UI stuff
+Time: 2022-03-16 16:14 +0200
+-------
+Revision: 121
+Description: Card Burn
+Time: 2022-03-15 14:20 +0200
+-------
+Revision: 120
+Description: ActionOrb cooler now
+Time: 2022-03-08 14:47 +0200
+-------
+Revision: 119
+Description: Card Glow 2.0 & Tooltip Anchoring
+Time: 2022-03-07 13:58 +0200
+-------
+Revision: 118
+Description: Fixing dialogue bugs and finalized Dinner At Sacain
+Time: 2022-03-03 13:57 +0200
+-------
+Revision: 117
+Description: ActionOrb and storybook fixing
+Time: 2022-03-02 13:55 +0200
+-------
+Revision: 116
+Description: GUI refinement
+Time: 2022-02-07 11:38 +0200
+-------
+Revision: 115
+Description: Haste and Slow work now
+Time: 2022-02-04 13:27 +0200
+-------
+Revision: 114
+Description: Multitarget visuals and mechanicals.
+Combat GUI has 50px smalelr bottom bar than Dialog UI
+Time: 2022-02-02 13:51 +0200
+-------
+Revision: 113
+Description: Stuff?
+Time: 2022-02-01 13:40 +0200
+-------
+Revision: 112
+Description: Added Namespaces, multitargeting
+Time: 2022-02-01 13:39 +0200
+-------
+Revision: 111
+Description: Preparing for refactor
+Time: 2022-02-01 10:04 +0200
+-------
+Revision: 110
+Description: Big combatGUI tech overhaul, Dinner At Sacain scene
+Time: 2022-01-26 13:25 +0200
+-------
+Revision: 109
+Description: DialogManager fixes and VS22
+Time: 2022-01-17 15:26 +0200
+-------
+Revision: 108
+Description: DialogueManager BugFixes
+Time: 2022-01-14 15:23 +0200
+-------
+Revision: 107
+Description: Created availabilitycheck for DialogCharacters and Hyperlinks
+Time: 2022-01-14 11:48 +0200
+-------
+Revision: 106
+Description: Links and text
+Time: 2022-01-14 10:48 +0200
+-------
+Revision: 105
+Description: World Map stuff
+Time: 2021-12-21 12:09 +0200
+-------
+Revision: 104
+Description: BaseFXAudio class
+Time: 2021-12-14 14:16 +0200
+-------
+Revision: 103
+Description: Sound effects and minor fixes
+Time: 2021-12-10 15:24 +0200
+-------
+Revision: 102
+Description: Minor changes
+Time: 2021-12-09 15:04 +0200
+-------
+Revision: 101
+Description: new TurnDisplay works
+Time: 2021-12-07 12:52 +0200
+-------
+Revision: 100
+Description: GUI stuff
+Time: 2021-11-25 15:07 +0200
+-------
+Revision: 99
+Description: Changed combat rules, added summoning scene
+Time: 2021-11-23 14:28 +0200
+-------
+Revision: 98
+Description: Replaced the command thing with InkFunction static class
+Time: 2021-11-18 13:02 +0200
+-------
+Revision: 97
+Description: DialogueManager is almost ready
+Time: 2021-11-12 15:01 +0200
+-------
+Revision: 96
+Description: More dialoguecode, starting to look ready.
+Time: 2021-11-09 13:01 +0200
+-------
+Revision: 95
+Description: Dialogue code
+Time: 2021-11-04 12:07 +0200
+-------
+Revision: 94
+Description: Dialogue coding
+Time: 2021-11-03 10:12 +0200
+-------
+Revision: 93
+Description: Inventor Origin ink, new art
+Time: 2021-10-29 15:04 +0300
+-------
+Revision: 92
+Description: tooltip bugs, main menu and new game development
+Time: 2021-10-10 19:20 +0300
+-------
+Revision: 91
+Description: Bug fixing
+Time: 2021-10-06 15:06 +0300
+-------
+Revision: 90
+Description: DialogSystem working somewhat in storybook
+Time: 2021-10-05 16:15 +0300
+-------
+Revision: 89
+Description: Fixing Dialog System for new Input System
+Time: 2021-10-04 15:22 +0300
+-------
+Revision: 88
+Description: Added storybook scene and scene management stuff
+Time: 2021-10-01 15:45 +0300
+-------
+Revision: 87
+Description: improved framework for scene management + new game stuff
+Time: 2021-09-30 16:14 +0300
+-------
+Revision: 86
+Description: Movement to empty space working
+Time: 2021-09-28 14:26 +0300
+-------
+Revision: 85
+Description: Shader Tuning
+Time: 2021-09-28 10:46 +0300
+-------
+Revision: 84
+Description: Made a shader for moving to empty position
+Time: 2021-09-27 15:47 +0300
+-------
+Revision: 83
+Description: New Game
+Time: 2021-09-24 14:30 +0300
+-------
+Revision: 82
+Description: Unity Input System
+Time: 2021-09-22 16:11 +0300
+-------
+Revision: 81
+Description: Map stuff
+Time: 2021-09-21 16:04 +0300
+-------
+Revision: 80
+Description: More tooltips
+Time: 2021-09-20 16:00 +0300
+-------
+Revision: 79
+Description: Many tooltips
+Time: 2021-09-20 16:00 +0300
+-------
+Revision: 78
+Description: Regenerated project files, Menu and map stuff
+Time: 2021-09-20 14:52 +0300
+-------
+Revision: 77
+Description: Tough coding stuff
+Time: 2021-09-17 16:11 +0300
+-------
+Revision: 76
+Description: Scenework
+Time: 2021-09-16 15:30 +0300
+-------
+Revision: 75
+Description: Refactored
+Time: 2021-09-15 15:23 +0300
+-------
+Revision: 74
+Description: Refactoring deltaTime
+Time: 2021-09-15 13:09 +0300
+-------
+Revision: 73
+Description: NameGenerator
+Time: 2021-09-14 10:41 +0300
+-------
+Revision: 72
+Description: Card shuffling logic bugs cleared
+Time: 2021-09-11 13:22 +0300
+-------
+Revision: 71
+Description: Improved Card movement
+Time: 2021-09-10 23:02 +0300
+-------
+Revision: 70
+Description: Card Movement stuff
+Time: 2021-09-10 22:46 +0300
+-------
+Revision: 69
+Description: Cool world map scene
+Time: 2021-09-08 13:33 +0300
+-------
+Revision: 68
+Description: Updated Ink
+Time: 2021-09-07 10:47 +0300
+-------
+Revision: 67
+Description: BaseEffect Activation
+Time: 2021-09-02 13:50 +0300
+-------
+Revision: 66
+Description: Item, Equipment, Consumable and Weapon
+Time: 2021-09-01 15:55 +0300
+-------
+Revision: 65
+Description: Deckviewer selection. new Card design. Started inventory
+Time: 2021-08-30 15:47 +0300
+-------
+Revision: 64
+Description: Deck Viewer
+Time: 2021-08-27 12:11 +0300
+-------
+Revision: 63
+Description: Inspect window, reorganizing scripts
+Time: 2021-08-25 10:02 +0300
+-------
+Revision: 62
+Description: Art stuff
+Time: 2021-08-18 15:26 +0300
+-------
+Revision: 61
+Description: Postprocessing
+Time: 2021-08-16 17:01 +0300
+-------
+Revision: 60
+Description: BaseFX implemented. Fixing the card targeting
+Time: 2021-08-12 16:00 +0300
+-------
+Revision: 59
+Description: Card targeting implemented
+Time: 2021-08-11 15:26 +0300
+-------
+Revision: 58
+Description: Maneuver and Melee, Strike and Move are working now
+Time: 2021-08-10 15:55 +0300
+-------
+Revision: 57
+Description: Card targeting stuff
+Time: 2021-08-09 13:43 +0300
+-------
+Revision: 56
+Description: Damage Text working REALLY well
+Time: 2021-08-05 16:11 +0300
+-------
+Revision: 55
+Description: Damage Text working well
+Time: 2021-08-05 13:32 +0300
+-------
+Revision: 54
+Description: Working on combat
+Time: 2021-08-03 14:57 +0300
+-------
+Revision: 53
+Description: Update
+Time: 2021-07-29 13:17 +0300
+-------
+Revision: 52
+Description: Upgrade prep
+Time: 2021-07-27 11:57 +0300
+-------
+Revision: 51
+Description: Fixing Combat, preparing to upgrade unity
+Time: 2021-07-27 11:57 +0300
+-------
+Revision: 50
+Description: Fixing Card art
+Time: 2021-07-20 12:51 +0300
+-------
+Revision: 49
+Description: Road system can now flow a path
+TODO:Allow the path to be reversed as well
+Time: 2021-02-09 14:20 +0200
+-------
+Revision: 48
+Description: More temporary art and road system improvements
+Time: 2021-02-09 13:30 +0200
+-------
+Revision: 47
+Description: RoadSystem works
+Time: 2020-11-21 20:41 +0200
+-------
+Revision: 46
+Description: RoadSystem
+Time: 2020-11-21 16:11 +0200
+-------
+Revision: 45
+Description: Arena tools looking better
+Time: 2020-11-15 19:26 +0200
+-------
+Revision: 44
+Description: Arena tools
+Time: 2020-10-19 14:21 +0300
+-------
+Revision: 43
+Description: Postprocessing Effects created
+Time: 2020-10-18 18:41 +0300
+-------
+Revision: 42
+Description: Refactoring and combat creation tools
+Time: 2020-10-18 16:51 +0300
+-------
+Revision: 41
+Description: Korjauksia
+Time: 2020-10-14 19:51 +0300
+-------
+Revision: 40
+Description: Dialog Hommat Toimii
+Time: 2020-10-06 13:35 +0300
+-------
+Revision: 39
+Description: Added items, equipment and weapons
+Time: 2020-08-23 14:51 +0300
+-------
+Revision: 38
+Description: Things kinda working
+Time: 2020-08-22 18:16 +0300
+-------
+Revision: 37
+Description: Integration done. Hyperlinks added to basecollection
+Time: 2020-08-22 15:01 +0300
+-------
+Revision: 36
+Description: Integration half way there
+Time: 2020-08-21 20:30 +0300
+-------
+Revision: 35
+Description: Tooltips work now and Requirements too
+Time: 2020-08-20 11:32 +0300
+-------
+Revision: 34
+Description: ID numbers work now
+Time: 2020-08-16 21:02 +0300
+-------
+Revision: 33
+Description: Todo: Saving Collection bug wipes the whole database
+Time: 2020-08-16 20:42 +0300
+-------
+Revision: 32
+Description: Sorting works now
+Time: 2020-08-16 11:50 +0300
+-------
+Revision: 31
+Description: Added new cards
+Time: 2020-08-15 23:26 +0300
+-------
+Revision: 30
+Description: Properties are the asshole of devil. Never use them ever!
+Time: 2020-08-15 20:56 +0300
+-------
+Revision: 29
+Description: Icons and a few cards
+Time: 2020-08-15 18:14 +0300
+-------
+Revision: 28
+Description: Database kinda works?
+Time: 2020-08-15 18:11 +0300
+-------
+Revision: 27
+Description: Database fukin works now
+Time: 2020-08-12 20:26 +0300
+-------
+Revision: 26
+Description: Creation tools
+Time: 2020-08-10 22:18 +0300
+-------
+Revision: 25
+Description: I'm a fucking master of the universe!
+Time: 2020-08-04 17:46 +0300
+-------
+Revision: 24
+Description: Reworking card editing tools
+Time: 2020-08-01 19:16 +0300
+-------
+Revision: 23
+Description: updating text
+Time: 2020-08-01 15:02 +0300
+-------
+Revision: 22
+Description: dialog panel stuff, starting to work now
+Time: 2020-05-02 15:41 +0300
+-------
+Revision: 21
+Description: TMPRO updated
+Time: 2020-04-27 17:56 +0300
+-------
+Revision: 20
+Description: Updated Version
+Time: 2020-04-27 17:52 +0300
+-------
+Revision: 19
+Description: Preparing to update version
+Time: 2020-04-27 17:24 +0300
+-------
+Revision: 18
+Description: Did somebody say Dialog?!?!
+Time: 2020-04-26 15:57 +0300
+-------
+Revision: 17
+Description: Card Auras
+Time: 2020-03-29 15:52 +0300
+-------
+Revision: 16
+Description: New cool healthbar, add option to keep smaller healthbars too?
+Time: 2020-03-28 15:46 +0200
+-------
+Revision: 15
+Description: Movement and rotation finally implemented
+Time: 2020-03-27 13:29 +0200
+-------
+Revision: 14
+Description: GUI revamp
+Time: 2020-03-25 15:54 +0200
+-------
+Revision: 13
+Description: UI fixing, movement in progress
+Time: 2020-03-21 15:54 +0200
+-------
+Revision: 12
+Description: random target toimii nyt
+Time: 2020-03-06 18:46 +0200
+-------
+Revision: 11
+Description: Nyt skillit ei failaa enään, mutta random target jää päälle
+Time: 2020-03-06 18:43 +0200
+-------
+Revision: 10
+Description: Bugi että kaikki skillit failaa
+Time: 2020-03-01 17:10 +0200
+-------
+Revision: 9
+Description: UI taskmanager stuff
+Time: 2020-02-29 16:06 +0200
+-------
+Revision: 8
+Description: jotain filejä
+Time: 2020-02-09 16:38 +0200
+-------
+Revision: 7
+Description: Added damage reversal aura
+Time: 2020-02-09 16:35 +0200
+-------
+Revision: 6
+Description: Damage now has a prepare period to apply events that modify the incoming or outgoing damage.
+Time: 2020-02-08 14:33 +0200
+-------
+Revision: 5
+Description: Drawing cards is animated now (something wrong with the positions)
+Time: 2020-02-02 16:39 +0200
+-------
+Revision: 4
+Description: MessageSystem
+Time: 2020-02-01 16:59 +0200
+-------
+Revision: 3
+Description: Updated Version
+Time: 2020-02-01 14:15 +0200
+-------
+Revision: 2
+Description: Barking
+Time: 2020-01-26 18:11 +0200
+-------
+Revision: 1
+Description: hgignore
+Time: 2020-01-26 18:10 +0200
+-------
+Revision: 0
+Description: everything
+Time: 2020-01-26 11:06 +0200
+-------
