@@ -133,10 +133,7 @@ namespace RD
 		}
 		public static void DisplayTooltip(BaseObject link, Vector2 position = default, Vector2? anchor = null)
 		{
-			List<BaseObject> h = new List<BaseObject>();
-			h.Add(link);
-			DisplayTooltips(h, position,anchor);
-
+			DisplayTooltips(new List<BaseObject> { link}, position,anchor);
 		}
 		public static Tooltip LockTooltip(BaseObject link, Vector2 anchoredPosition, Vector2? anchor = null)
 		{
@@ -156,7 +153,7 @@ namespace RD
 			//current.StartCoroutine(current.RefreshAfterFrame());
 			return tt;
 		}
-		public static void DisplayTooltips(List<BaseObject> links, Vector2 position = default, Vector2? anchor = null)
+		public static void DisplayTooltips(List<BaseObject> links, Vector2 position = default, Vector2? anchor = null, bool instant = false)
 		{
 			if (position == default)
 				position = Mouse.current.position.ReadValue();
@@ -209,8 +206,8 @@ namespace RD
 				}
 				current._rectTransform.pivot = pivot;
 			}
-			current.UpdatePosition();
-			current.StartCoroutine(current.RefreshAfterFrame());
+			//current.UpdatePosition();
+			current.StartCoroutine(current.RefreshAfterFrame(instant));
 			void VerticalTooltips()
 			{
 				float pivotY = anchor==null?position.y / Screen.height:((Vector2)anchor).y;
@@ -308,7 +305,7 @@ namespace RD
 			tt.transform.position = origpos;
 		}
 		float fadeSpeed = 10f;
-		IEnumerator RefreshAfterFrame()
+		IEnumerator RefreshAfterFrame(bool instant)
 		{
 			//Debug.Break();
 			int frame = 1;
@@ -318,8 +315,13 @@ namespace RD
 				yield return null;
 			}
 			current.UpdatePosition();
-			current.StartCoroutine(UIAnimationTools.FadeCanvasGroupAlpha(current.GetComponent<CanvasGroup>(), true, current.fadeSpeed));
+			if (!instant) current.StartCoroutine(UIAnimationTools.FadeCanvasGroupAlpha(current.GetComponent<CanvasGroup>(), true, current.fadeSpeed));
+			else current.GetComponent<CanvasGroup>().alpha = 1;
 			//Debug.Break();
+		}
+		public static void Refresh()
+		{
+			current.UpdatePosition();
 		}
 		void UpdatePosition()
 		{

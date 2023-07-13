@@ -1155,6 +1155,33 @@ namespace RD.Dialog
 			#endregion
 			#region General
 			/// <summary>
+			/// Plays a sound effect
+			/// </summary>
+			/// <param name="clip">BaseFXAudio index or name</param>
+			/// <returns></returns>
+			public static bool PlaySound(string clip)
+			{
+				int i = -1;
+				BaseFXAudio bfa = null;
+				if (int.TryParse(clip, out i))
+				{
+					bfa = (BaseFXAudio)CodeTools.db.Get<BaseFXAudio>(i);
+				}
+				else
+				{
+					bfa = (BaseFXAudio)CodeTools.db.Get<BaseFXAudio>(clip);
+				}
+				if (bfa != null)
+				{
+					SoundEffectPlayer._current.Play(bfa);
+				}
+				else
+				{
+					Debug.LogError("Could not play audioclip '" + clip + "'");
+				}
+				return true;
+			}
+			/// <summary>
 			/// Set DialogMode to Dialog
 			/// </summary>
 			/// <returns></returns>

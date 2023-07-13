@@ -18,7 +18,10 @@ namespace RD
 
 			_current.StartCoroutine(FadeMusic(activate, time));
 		}
+		public static void PlaySound(AudioClip clip)
+		{
 
+		}
 		static IEnumerator FadeMusic(bool activate, float speed)
 		{
 			if (activate)

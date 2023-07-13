@@ -3,16 +3,22 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-namespace RD
+namespace RD.UI
 {
 	public class MapMover : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
 		//public Vector3 max;
 		//public Vector3 min;
+		public static MapMover _current;
+		public static MapNode _currentTooltip;
 		public CodeTools.Bfloat scaleLimit;
 		public float moveSpeed = 20f;
 		RectTransform _rt;
 		RectTransform _canvas;
+		void Awake()
+		{
+			_current = this;
+		}
 		private void Start()
 		{
 			//_inputs.UI.ScrollWheel.performed += ScrollScale;
@@ -49,6 +55,9 @@ namespace RD
 			_rt.localScale = scale;
 			_rt.SetPivot(Vector2.one * 0.5f);
 			KeepPositionWithinBounds();
+			if (_currentTooltip != null)
+				_currentTooltip.ShowTooltip();
+
 		}
 		public void KeyMovement(InputAction.CallbackContext context)
 		{
@@ -108,7 +117,8 @@ namespace RD
 			if (CodeTools.IsMouseClick(context,false))
 			{
 				//Debug.Log("MapMover Click");
-				StartCoroutine(HideTooltips());
+				if(!MapNode._disableLocking)
+					StartCoroutine(HideTooltips());
 			}
 		}
 		IEnumerator HideTooltips()
@@ -122,10 +132,9 @@ namespace RD
 			if (!_preventHide)
 			{
 				TooltipSystem.HideAllTooltips();
-				foreach (MapTooltipArea mta in FindObjectsOfType<MapTooltipArea>())
+				foreach (MapNode mn in FindObjectsOfType<MapNode>())
 				{
-					mta._locked = false;
-					mta.HideTooltip();
+					mn.HideTooltip();
 				}
 			}
 			else

@@ -71,6 +71,23 @@ namespace RD.DB
 				_actualDescription = _description;
 			return _actualDescription;
 		}
+		public string GetLimitedDescription(int limit)
+		{
+			if (_actualDescription == "")
+				_actualDescription = _description;
+			if (_actualDescription.Length <= limit)
+				return _actualDescription;
+			else
+			{
+				int spaceIndex = _actualDescription.Substring(0, limit).LastIndexOf(' ');
+				if (spaceIndex < limit - 10)
+					return _actualDescription.Substring(0, limit - 3) + "...";
+				else
+				{
+					return _actualDescription.Substring(0, spaceIndex) + " ...";
+				}
+			}
+		}
 		[SerializeField] string _descriptionSaved;
 		public bool GetDescriptionModified()
 		{

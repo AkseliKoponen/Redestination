@@ -15,14 +15,14 @@ namespace RD.DB
 		public Color _whitenessColor;
 		public TMP_FontAsset _splashFontAsset;
 		public Material _splashFontMaterial;
-
+		public BaseFXAudio _splashAudio;
 		public string _prefix;
 		public string _suffix;
 		public List<string> _names = new List<string>();
 		public Sprite _portrait;
 		public DialogCharacter()
 		{
-			_layOutSpace = new LayOutSpace(new List<int> { 1, 3, 5  }, new List<string> {"Dialog", "Splash", "General"});
+			_layOutSpace = new LayOutSpace(new List<int> { 1, 3, 6  }, new List<string> {"Dialog", "Splash", "General"});
 		}
 		public string GetCharacter(string prefix = "", string suffix = "", string customName = default, bool link=false)
 		{

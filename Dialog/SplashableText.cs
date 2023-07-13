@@ -92,7 +92,7 @@ namespace RD.Dialog
 				GetComponent<RectTransform>().anchoredPosition = CharacterPosition.GetIndexPosition(positions.Count);
 				positions.Add(new CharacterPosition(GetComponent<RectTransform>().anchoredPosition, r.dialogCharacter._name));
 			}
-			st.SetDuration(_dialogueManager.GetTextDuration(_tm.GetParsedText())*2);
+			st.SetDuration(_dialogueManager.GetTextDuration(_tm.GetParsedText())*4);
 			Init(st);
 
 			void Init(SplashText st)
@@ -129,11 +129,16 @@ namespace RD.Dialog
 				else
 				{
 					_tm.maxVisibleCharacters = 99999;
+					if (r.dialogCharacter._splashAudio != null)
+					{
+						SoundEffectPlayer._current.Play(r.dialogCharacter._splashAudio);
+					}
 				}
 				if (_st.specs.jitter)
 				{
 					VertexJitter vj = gameObject.AddComponent<VertexJitter>();
 					vj.CurveScale = _tm.fontSize;
+					vj.RemoveAfterTime();
 					//vj.AutoJitter(1);
 				}
 				if (_st.specs.random)
@@ -256,9 +261,15 @@ namespace RD.Dialog
 			}
 			public void SetDuration(float basetime)
 			{
-				if (DialogueManager.Settings.SplashText._writeMode == DialogueManager.Settings.SplashText.WriteMode.Fade)
-					basetime *= 2;
-				duration = basetime;
+				switch (DialogueManager.Settings.SplashText._writeMode)
+				{
+					default:
+						duration = basetime;
+						break;
+					case DialogueManager.Settings.SplashText.WriteMode.Write:
+						duration = 0.75f * basetime;
+						break;
+				}
 			}
 			public SplashText()
 			{

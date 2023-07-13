@@ -668,7 +668,43 @@ namespace RD
 				child.gameObject.layer = layer;
 			}
 		}
-
+		/// <summary>
+		/// Returns the position of B in the local space of A
+		/// </summary>
+		public static Vector3 GetPositionInLocalSpace(Transform A, Transform B)
+		{
+			Transform bParent = B.parent;
+			int bindex = B.GetSiblingIndex();
+			B.SetParent(A.parent);
+			Vector3 pos = B.localPosition;
+			B.SetParent(bParent);
+			B.SetSiblingIndex(bindex);
+			return pos;
+		}
+		public static Color GetRandomColor(bool whiteBackground = false)
+		{
+			float h = UnityEngine.Random.Range(0f, 1f);
+			float v = whiteBackground ? UnityEngine.Random.Range(0f, 0.75f) : UnityEngine.Random.Range(0.25f, 1);
+			float s = UnityEngine.Random.Range(0.15f, 0.9f);
+			Color c = Color.HSVToRGB(h, s, v);
+			return c;
+		}
+		public static Vector3 Vector3Divide(Vector3 a, Vector3 b)
+		{
+			Vector3 temp = new Vector3(); ;
+			temp.x = (b.x != 0 ? a.x / b.x : a.x);
+			temp.y = (b.y != 0 ? a.y / b.y : a.y);
+			temp.z = (b.z != 0? a.z / b.z : a.z);
+			return temp;
+		}
+		public static Vector3 Vector3Multiply(Vector3 a, Vector3 b)
+		{
+			Vector3 temp = new Vector3();
+			temp.x = a.x * b.x;
+			temp.y = a.y * b.y;
+			temp.z = a.z*b.z;
+			return temp;
+		}
 	}
 	public static class UIAnimationTools
 	{
@@ -1506,6 +1542,54 @@ namespace RD
 				}
 			}
 			return links;
+		}
+	}
+	public static class DebugTools
+	{
+		public static void DebugCube(Vector3 position, float size = 0.15f, Color color = default,float time = 0)
+		{
+			if (color == default)
+				color = Color.red;
+			List<Vector3> points = new List<Vector3>();
+			Vector3 temp = position;
+			temp.x += size;
+			temp.y += size;
+			temp.z += size;
+			float f = size * 2f;
+			Add(); //+++
+			temp.x -= f;
+			Add(); //-++
+			temp.y -= f;
+			Add(); //--+
+			temp.z -= f;
+			Add(); //---
+			temp.y += f;
+			Add();//-+-
+			temp.x += f;
+			temp.y -= f;
+			temp.z += f;
+			Add();//+-+
+			temp.z -= f;
+			Add();//+--
+			temp.y += f;
+			Add();//++-
+			for(int i = 0; i < points.Count; i++)
+			{
+				for (int y = 0; y < points.Count; y++)
+				{
+					if (i != y)
+					{
+						if(time<=0)
+							Debug.DrawLine(points[i], points[y], color);
+						else
+							Debug.DrawLine(points[i], points[y], color,time);
+					}
+				}
+			}
+			void Add()
+			{
+				points.Add(temp);
+			}
 		}
 	}
 	public class CoroutineWithData

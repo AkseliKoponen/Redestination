@@ -3,6 +3,7 @@ using RD.Combat;
 using RD.DB;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RD
 {
@@ -16,6 +17,7 @@ namespace RD
 		public bool locked = false;
 		string totalText;
 		int maxLines = 5;
+		int maxChars = 135;
 		public void SetMaxLines(int max = 5)
 		{
 			if (max <= 0)
@@ -23,48 +25,58 @@ namespace RD
 			maxLines = max;
 		}
 		#region Toggle
-		public void Toggle(BaseObject link)
+		public void Toggle(BaseObject obj)
 		{
 			gameObject.SetActive(true);
-			_nameText.text = link._name;
-			totalText = link.GetDescription();
+			if (_nameText.text.Equals(obj._name))
+				return;
+			_nameText.text = obj._name;
+			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
 		}
-		public void Toggle(Item item)
+		public void Toggle(Item obj)
 		{
 			gameObject.SetActive(true);
-			_nameText.text = item._name;
-			totalText = item.GetItemDescription();
+			if (_nameText.text.Equals(obj._name))
+				return;
+			_nameText.text = obj._name;
+			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
-			_itemImage.AddItem(item);
-			_itemType.text = item.GetTypeName();
+			_itemImage.AddItem(obj);
+			_itemType.text = obj.GetTypeName();
 		}
-		public void Toggle(Weapon item)
+		public void Toggle(Weapon obj)
 		{
 			gameObject.SetActive(true);
-			_nameText.text = item._name;
-			totalText = item.GetItemDescription();
+			if (_nameText.text.Equals(obj._name))
+				return;
+			_nameText.text = obj._name;
+			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
-			_itemImage.AddItem(item);
-			_itemType.text = item.GetTypeName();
+			_itemImage.AddItem(obj);
+			_itemType.text = obj.GetTypeName();
 		}
-		public void Toggle(Equipment item)
+		public void Toggle(Equipment obj)
 		{
 			gameObject.SetActive(true);
-			_nameText.text = item._name;
-			totalText = item.GetItemDescription();
+			if (_nameText.text.Equals(obj._name))
+				return;
+			_nameText.text = obj._name;
+			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
-			_itemImage.AddItem(item);
-			_itemType.text = item.GetTypeName();
+			_itemImage.AddItem(obj);
+			_itemType.text = obj.GetTypeName();
 		}
-		public void Toggle(Consumable item)
+		public void Toggle(Consumable obj)
 		{
 			gameObject.SetActive(true);
-			_nameText.text = item._name;
-			totalText = item.GetItemDescription();
+			if (_nameText.text.Equals(obj._name))
+				return;
+			_nameText.text = obj._name;
+			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
-			_itemImage.AddItem(item);
-			_itemType.text = item.GetTypeName();
+			_itemImage.AddItem(obj);
+			_itemType.text = obj.GetTypeName();
 		}
 		#endregion
 		public string GetName()
@@ -78,34 +90,44 @@ namespace RD
 		void SetDescription()
 		{
 			totalText = Translator.PrepGenericText(totalText);
-			_descriptionText.text = totalText;
 			_descriptionText.maxVisibleLines = maxLines;
-			if (maxLines > 0)
-				StartCoroutine(ClampTooltip());
+			_descriptionText.text = totalText;
+			_descriptionText.ForceMeshUpdate();
+			LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
 			//_descriptionText.maxVisibleLines = maxLines;
 			//SetHeight();
 		}
-		IEnumerator ClampTooltip()
+		#region DeleteMe
+		void ClampTooltip()
 		{
+			/*
 			int frameWait = 1;
 			while (frameWait > 0)
 			{
 				frameWait--;
 				yield return null;
-			}
+			}*/
 			int lineCount = _descriptionText.textInfo.lineCount;
-			if (lineCount > maxLines)
-			{
-				//Debug.Log("LineCount = " + lineCount + "\nMaxlines = " + maxLines);
-				int charIndex = _descriptionText.textInfo.lineInfo[maxLines - 1].lastCharacterIndex;
-				string tempText = totalText.Substring(0, charIndex - 1);
+			_descriptionText.text = totalText;
+			_descriptionText.ForceMeshUpdate();
+			//if (lineCount > maxLines){
+			//Debug.Log("LineCount = " + lineCount + "\nMaxlines = " + maxLines);
+			int charIndex = _descriptionText.textInfo.lineInfo[maxLines - 1].lastCharacterIndex;
+			Debug.Log(charIndex +" vs "+_descriptionText.text.Length);
+			//if (charIndex < _descriptionText.text.Length){
+				string tempText = _descriptionText.text.Substring(0, charIndex - 1);
 				charIndex = tempText.LastIndexOf(' ');
 				//Debug.Log("Total Line length = " + totalText.Length + "\n and " + maxLines + "th line lastCharIndex = " + charIndex);
 				//find previous space
 				tempText = totalText.Substring(0, charIndex) + " ...";
 				_descriptionText.text = tempText;
-			}
+			//}
+			//_descriptionText.ForceMeshUpdate();
+			LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+			TooltipSystem.Refresh();
+			//}
 		}
+#endregion
 		public float GetDescriptionHeight()
 		{
 			return _descriptionText.preferredHeight;

@@ -113,7 +113,7 @@ namespace RD.DB
 				else
 					GUILayout.BeginHorizontal();
 
-
+				
 				GUILayout.Space(indent);
 				FieldAttributes fab = field.Attributes;
 				TooltipAttribute tooltip = GetTooltip(field, true);
@@ -277,7 +277,7 @@ namespace RD.DB
 						field.SetValue(_class, EditorGUILayout.ColorField((Color)field.GetValue(_class), GUILayout.Width(125)));
 						if (GUILayout.Button("New Color",GUILayout.Width(100)))
 						{
-							field.SetValue(_class, GenerateRandomColor());
+							field.SetValue(_class, GetRandomColor());
 						}
 						break;
 					case "TextAsset":
@@ -1092,14 +1092,7 @@ namespace RD.DB
 			return attributes.Length > 0 ? attributes[0] : null;
 		}
 
-		static Color GenerateRandomColor(bool whiteBackground = false)
-		{
-			float h = UnityEngine.Random.Range(0f, 1f);
-			float v = whiteBackground? UnityEngine.Random.Range(0f, 0.75f) : UnityEngine.Random.Range(0.25f, 1);
-			float s = UnityEngine.Random.Range(0.15f, 0.9f);
-			Color c = Color.HSVToRGB(h, s, v);
-			return c;
-		}
+		
 		public static void SetTextureColor(this Texture2D tex2, Color32 color)
 		{
 
