@@ -4,12 +4,27 @@ using RD;
 using UnityEngine;
 using static RD.CodeTools;
 using System.Reflection;
+using RD.UI;
 
 namespace RD.Combat
 {
 	public enum Facing { Left, Right }
 
-	
+	public class CharacterMind
+	{
+		/// <summary>
+		/// Both active and spare thoughts
+		/// </summary>
+		public List<BaseThought> _thoughtsAll;
+		/// <summary>
+		/// Thoughts that are currently in the mind
+		/// </summary>
+		public List<Thought> _thoughtsActive;
+		/// <summary>
+		/// The remaining thoughts that may be added to the mind
+		/// </summary>
+		public List<Thought> _thoughtsSpare;
+	}
 	public class Deck
 	{
 		public int _beingDiscarded = 0;
@@ -590,9 +605,8 @@ namespace RD.Combat
 				desc = desc + ".";
 			_actualDescription = Capitalize(desc);
 			_actualDescription = Translator.PrepGenericText(_actualDescription);
-
-
 			_actualDescription = SetNumbersInDescription(_actualDescription);
+			_description = _actualDescription;
 			string SetNumbersInDescription(string str)
 			{
 				while (str.Contains("{") && str.Substring(str.IndexOf("{")).Contains("}"))
@@ -1026,7 +1040,8 @@ namespace RD.Combat
 	}
 	public class Damage
 	{
-		public int id;
+		public static int _globalID = 0;
+		public int _id;
 		public CombatCharacter _target;
 		public CombatCharacter _source;
 		public int _damageFlat = 0;
@@ -1044,17 +1059,23 @@ namespace RD.Combat
 		{
 			_spellPowerMultiplier = damageMultiplier;
 			Init(baseEffect, source, target, card);
-			id = Random.Range(0, 10000);
+			SetID();
 			//Dbug();
 		}
 		public Damage(CombatCharacter source, CombatCharacter target = null)
 		{
+			SetID();
 			_damageFlat = 0;
 			_source = source;
 			if (target == null)
 				_target = _source;
 			else
 				_target = target;
+		}
+		void SetID()
+		{
+			_id = _globalID;
+			_globalID++;
 		}
 		void Init(BaseEffect baseEffect,  CombatCharacter source = null, CombatCharacter target = null, Card card = null)
 		{
@@ -1130,7 +1151,7 @@ namespace RD.Combat
 
 		public string GetInfo()
 		{
-			return "<color=red>id=" + id + ". " + GetDamage() + " damage from " + (_source != null ? _source.GetName() : "null") + " to " + (_target != null ? _target.GetName() : "null") + "</color>";
+			return "<color=red>id=" + _id + ". " + GetDamage() + " damage from " + (_source != null ? _source.GetName() : "null") + " to " + (_target != null ? _target.GetName() : "null") + "</color>";
 		}
 	}
 	public class Inventory
@@ -1537,5 +1558,26 @@ namespace RD.Combat
 		_damage = damage;
 		_name = "TestSword";
 	}*/
+	}
+
+	public class Thought:BaseThought
+	{
+		public GridTransform _gTransform;
+		public ThoughtUI _ui;
+		BaseThought _base;
+		void CopyBaseVariables()
+		{
+			CodeTools.CopyBaseFields(_base, this, typeof(BaseThought));
+		}
+		public void DisplayTooltip(RectTransform rt)
+		{
+
+			Vector2 pos = GetRecttransformPivotPoint(rt, new Vector2(1, 0.5f), true);
+			TooltipSystem.DisplayTooltip(this, pos);
+		}
+		public void UpdateGT()
+		{
+			_gTransform = new GridTransform(_ui._gtransform);
+		}
 	}
 }

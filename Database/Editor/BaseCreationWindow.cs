@@ -26,7 +26,8 @@ namespace RD.DB
 	*/
 		//
 		public BaseObject _baseObject;
-		public BaseCard _baseCard;
+		//public BaseCard _baseCard;
+		public BaseThought _baseThought;
 		public BaseEffect _baseEffect;
 		public BaseAura _baseAura;
 		public BaseTalent _baseTalent;
@@ -43,7 +44,7 @@ namespace RD.DB
 		public SceneConstructor _sceneConstructor;
 		public BaseCombatCharacter _baseCombatCharacter;
 		public ObjectType _showObject;
-		public enum ObjectType { None,Card,Effect,Aura,Talent,Requirement, FX,FXAudio, Item, Equipment, Weapon, Consumable, Hyperlink, SceneConstructor, DialogCharacter, Fight, CombatCharacter }
+		public enum ObjectType { None,Thought,Effect,Aura,Talent,Requirement, FX,FXAudio, Item, Equipment, Weapon, Consumable, Hyperlink, SceneConstructor, DialogCharacter, Fight, CombatCharacter }
 		List<int> spaces = new List<int> { 6, 10 };
 		BaseCollection _baseCollection;
 		[MenuItem("Database/Create")]
@@ -146,8 +147,8 @@ namespace RD.DB
 				{
 					case ObjectType.Aura:
 						return _baseAura;
-					case ObjectType.Card:
-						return _baseCard;
+					case ObjectType.Thought:
+						return _baseThought;
 					case ObjectType.Consumable:
 						return _baseConsumable;
 					case ObjectType.DialogCharacter:
@@ -188,8 +189,8 @@ namespace RD.DB
 					case ObjectType.Aura:
 						_baseAura = (BaseAura)CreateInstance(typeof(BaseAura));
 						break;
-					case ObjectType.Card:
-						_baseCard = (BaseCard)CreateInstance(typeof(BaseCard));
+					case ObjectType.Thought:
+						_baseThought = (BaseThought)CreateInstance(typeof(BaseThought));
 						break;
 					case ObjectType.Consumable:
 						_baseConsumable = (BaseConsumable)CreateInstance(typeof(BaseConsumable));
@@ -244,13 +245,12 @@ namespace RD.DB
 				{
 					case ObjectType.Aura:
 						AssetDatabase.CreateAsset(_baseAura, "Assets/Resources/Database/" + GetFolder() + _baseAura.GetName() + ".asset");
-						//_baseCollection.AddToAuraDatabase(_baseAura);
 						_baseCollection.Add<BaseAura>(_baseAura);
 						return _baseAura;
-					case ObjectType.Card:
-						AssetDatabase.CreateAsset(_baseCard, "Assets/Resources/Database/" + GetFolder() + _baseCard.GetName() + ".asset");
-						_baseCollection.Add<BaseCard>(_baseCard);
-						return _baseCard;
+					case ObjectType.Thought:
+						AssetDatabase.CreateAsset(_baseThought, "Assets/Resources/Database/" + GetFolder() + _baseThought.GetName() + ".asset");
+						_baseCollection.Add<BaseThought>(_baseThought);
+						return _baseThought;
 					case ObjectType.Consumable:
 						AssetDatabase.CreateAsset(_baseConsumable, "Assets/Resources/Database/" + GetFolder() + _baseConsumable.GetName() + ".asset");
 						_baseCollection.Add<BaseConsumable>(_baseConsumable);

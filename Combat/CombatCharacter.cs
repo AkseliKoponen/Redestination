@@ -686,7 +686,7 @@ namespace RD.Combat
 						}
 					}
 					if (spell._effect._id == 38) endTurn = true; //BaseEffect 038 - End Turn
-					Task task = new Task(spell._effect.Activate(cc, this, spell._powerMultiplier,c));
+					Task task = new Task(spell._effect.Activate(cc, this, spell._powerMultiplier));
 					_combatEvents.OnActivateEffect(spell._effect);
 					while (task.Running)
 						yield return null;
@@ -1687,6 +1687,4 @@ namespace RD.Combat
 				RecalculateStats();
 		}
 	}
-
-
 }

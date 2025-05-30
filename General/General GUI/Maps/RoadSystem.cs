@@ -14,6 +14,9 @@ namespace RD.UI
 	public class RoadSystem : MonoBehaviour
 	{
 		#region MapNodeConnection
+		/// <summary>
+		/// A connection between two MapNodes. Abbreviated to 'MNC'.
+		/// </summary>
 		[Serializable]
 		public class MapNodeConnection
 		{
@@ -21,6 +24,10 @@ namespace RD.UI
 			public MapNode _nodeFrom;
 			public List<Vector3> _road = new List<Vector3>();
 			public List<Road> _roadPoints = new List<Road>();
+			/// <summary>
+			/// Construct a new MNC and copy all the values from an old <paramref name="mnc"/>
+			/// </summary>
+			/// <param name="mnc"></param>
 			public MapNodeConnection(MapNodeConnection mnc)
 			{
 				_nodeTo = mnc._nodeTo;
@@ -28,6 +35,11 @@ namespace RD.UI
 				_road = new List<Vector3>();
 				_road.AddRange(mnc._road);
 			}
+			/// <summary>
+			/// Construct new MNC and create a road for it with start and end points.
+			/// </summary>
+			/// <param name="from"></param>
+			/// <param name="to"></param>
 			public MapNodeConnection(MapNode from, MapNode to)
 			{
 				_road = new List<Vector3>
@@ -38,16 +50,29 @@ namespace RD.UI
 				_nodeTo = to;
 				_nodeFrom = from;
 			}
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <returns>"From --------- To"</returns>
 			public string GetName()
 			{
 				return _nodeFrom.gameObject.name + "---------" + _nodeTo.gameObject.name;
 			}
+			/// <summary>
+			/// Reverse the connection, swapping To and From as well as reversing road and roadpoints
+			/// </summary>
 			public void Reverse()
 			{
 				(_nodeFrom, _nodeTo) = (_nodeTo, _nodeFrom);
 				_road.Reverse();
 				_roadPoints.Reverse();
 			}
+			/// <summary>
+			/// Sort by alphabetical order with List.Sort
+			/// </summary>
+			/// <param name="mnc"></param>
+			/// <param name="mnc1"></param>
+			/// <returns></returns>
 			public static int CompareByName(MapNodeConnection mnc, MapNodeConnection mnc1)
 			{
 				return string.Compare(mnc.GetName(), mnc1.GetName(), StringComparison.Ordinal);
@@ -57,35 +82,38 @@ namespace RD.UI
 		List<MapNode> _mapNodes;
 		[NonSerialized] public MapNode _currentNode;
 		public Canvas _canvas;
-		//public float _canvasScale;
 		public Flagpole _playerFlag;
 		public float _footStepsSpeed = 50;
 		public GameObject _footstepsPrefab;
 		public Road _roadPrefab;
 		public Transform _footStepsParent;
 		public Transform _roadParent;
+		/// <summary>
+		/// Prefab asset for the X symbol
+		/// </summary>
 		public GameObject _XPrefab;
 		private void Awake()
 		{
 			_current = this;
-			//_playerPosition = _connections[UnityEngine.Random.Range(0, _connections.Count - 1)]._nodeFrom;
 			_currentNode = _connections[0]._nodeFrom;
 			_playerFlag.transform.position = _currentNode.transform.position;
 			_mapNodes = FindObjectsOfType<MapNode>().ToList();
-			
 		}
 		private void Start()
 		{
 			HighlightConnections();
 		}
+
 		GameObject _XObject;
+		/// <summary>
+		/// Start traveling to <paramref name="pos"/>, moving the Player Flag and creating footprints on ground
+		/// </summary>
+		/// <param name="pos">Where to travel</param>
 		public void TravelTo(MapNode pos)
 		{
 			if (_XObject)Destroy(_XObject);
 
 			LowlightMapNodes();
-			//pos.Highlight();
-			//pos._locked = true;
 			VisualizeRoad(_currentNode, pos);
 			_currentNode = pos;
 			_XObject = Instantiate(_XPrefab,transform);
@@ -95,9 +123,14 @@ namespace RD.UI
 		}
 
 		Task _footStepsAnimation;
+		/// <summary>
+		/// Create footsteps and move the player flag
+		/// </summary>
+		/// <param name="from">Origin</param>
+		/// <param name="to">Destination</param>
 		void VisualizeRoad(MapNode from, MapNode to)
 		{
-			Debug.Log("<color=teal>Visualizing road from " + from.gameObject.name + " to " + to.gameObject.name+"</color>");
+			//Debug.Log("<color=teal>Visualizing road from " + from.gameObject.name + " to " + to.gameObject.name+"</color>");
 			for(int i = _footStepsParent.childCount - 1; i >= 0; i--)
 			{
 				Destroy(_footStepsParent.GetChild(i).gameObject);
@@ -107,7 +140,7 @@ namespace RD.UI
 			if (mnc._nodeFrom != from)
 				mnc.Reverse();
 			List<RectTransform> footsteps = new List<RectTransform>();
-			for(int i = 0; i < mnc._roadPoints.Count-1; i++)
+			for (int i = 0; i < mnc._roadPoints.Count - 1; i++) //Create footsteps for each road segment
 			{
 				Vector3 start = mnc._roadPoints[i].GetComponent<RectTransform>().localPosition;
 				Vector3 end = mnc._roadPoints[i+1].GetComponent<RectTransform>().localPosition;
@@ -151,11 +184,10 @@ namespace RD.UI
 					}
 				}
 				Lerper lper = null;
-				lengths[lengths.Count-1] -= Mathf.RoundToInt(imagewidth);//Remove the last step
+				lengths[lengths.Count-1] -= Mathf.RoundToInt(imagewidth);
 				for (int i = 0; i < steps.Count; i++)
 				{
 					RectTransform step = steps[i];
-					//Keep _playerFlag parent and sibling index
 					step.GetComponent<Image>().enabled = true;
 					float length = (growWidth ? step.sizeDelta.x : step.sizeDelta.y);
 					if (i == 0)
@@ -173,7 +205,6 @@ namespace RD.UI
 						}
 						yield return null;
 					}
-					//while (lper != null)yield return null;
 				}
 				if (lper != null) lper.Stop();
 				Lerp.PositionUI(_playerFlag.GetComponent<RectTransform>(),CodeTools.GetPositionInLocalSpace(_playerFlag.transform,_currentNode.transform), timePerStep / 2f);
@@ -198,11 +229,17 @@ namespace RD.UI
 				}
 			}
 		}
+		/// <summary>
+		/// Lowlight all mapnodes
+		/// </summary>
 		void LowlightMapNodes()
 		{
 			foreach (MapNode mn in _mapNodes)
 				mn.Lowlight();
 		}
+		/// <summary>
+		/// Highlight all mapnodes connected to current position
+		/// </summary>
 		public void HighlightConnections()
 		{
 			List<MapNode> nodes = GetNodesTo(_currentNode);
@@ -211,6 +248,11 @@ namespace RD.UI
 				mn.Highlight();
 			}
 		}
+		/// <summary>
+		/// Get all <c>MapNodeConnection</c>s to <paramref name="from"/>
+		/// </summary>
+		/// <param name="from">The connecting mapnode</param>
+		/// <returns>List of <c>MapNodeConnection</c> </returns>
 		public List<MapNodeConnection> GetConnectionsTo(MapNode from)
 		{
 			List<MapNodeConnection> conns = new List<MapNodeConnection>();
@@ -221,6 +263,11 @@ namespace RD.UI
 			}
 			return conns;
 		}
+		/// <summary>
+		/// Get all <c>MapNode</c>s connected to <paramref name="from"/>
+		/// </summary>
+		/// <param name="from">The connecting MapNodes</param>
+		/// <returns>List of <c>MapNodes</c></returns>
 		public List<MapNode> GetNodesTo(MapNode from)
 		{
 			List<MapNode> nodes = new List<MapNode>();
@@ -235,6 +282,12 @@ namespace RD.UI
 			}
 			return nodes;
 		}
+		/// <summary>
+		/// Returns a MapNodeConnection between <paramref name="from"/> and <paramref name="to"/> if it exists. Otherwise returns null
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <returns></returns>
 		public MapNodeConnection GetConnection(MapNode from, MapNode to)
 		{
 			foreach (MapNodeConnection mnc in _connections)
@@ -244,6 +297,12 @@ namespace RD.UI
 			}
 			return null;
 		}
+		/// <summary>
+		/// Return true if a connection exists between <paramref name="from"/> and <paramref name="to"/>. Else false.
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <returns>True if a connection exists between <paramref name="from"/> and <paramref name="to"/>. Else false.</returns>
 		public bool HasConnection(MapNode from, MapNode to)
 		{
 			foreach(MapNodeConnection mnc in _connections)
@@ -279,6 +338,10 @@ namespace RD.UI
 			}
 			
 		}
+		/// <summary>
+		/// Draw a red line to display <paramref name="mnc"/> in Editor
+		/// </summary>
+		/// <param name="mnc"></param>
 		void DrawRoad(MapNodeConnection mnc)
 		{
 			if (mnc != null && mnc._road != null)
@@ -290,6 +353,10 @@ namespace RD.UI
 				}
 			}
 		}
+		/// <summary>
+		/// Draw a red line in Editor to display connections from <paramref name="mn"/>
+		/// </summary>
+		/// <param name="mn"></param>
 		public void DrawMapNode(MapNode mn)
 		{
 			foreach(MapNodeConnection mnc in GetConnectionsTo(mn))

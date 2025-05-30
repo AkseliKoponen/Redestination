@@ -140,7 +140,7 @@ namespace RD
 		public TargetingSystem.CardTargetingTool InitializeDeckTargeting(int count,Deck d)
 		{
 			_combatGUI._comps._targetingSystem.UnhighlightTargets();
-			ViewDeck(d, "Select " + count + " card"+ Plural(count), count);
+			ViewDeck(d, "Select " + count + " card"+ (count!=1?"s":""), count);
 			ctt = new TargetingSystem.CardTargetingTool(_cards);
 			Task t = new Task(ctt.CardTargeting(count));
 			StartCoroutine(DeckTargeting(t));

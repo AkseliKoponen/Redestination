@@ -10,8 +10,8 @@ namespace RD.DB
 	[CustomEditor(typeof(BaseCollection))]
 	public class BaseCollectionEditor : BaseEditor
 	{
-		enum BaseType { card, effect, aura, requirement, FX,FXAudio, Hyperlink, item, talent, DialogCharacter, weapon, equipment, consumable, SceneConstructor, combatCharacter, fight}
-		BaseType _baseType = BaseType.card;
+		enum BaseType { thought, effect, aura, requirement, FX,FXAudio, Hyperlink, item, talent, DialogCharacter, weapon, equipment, consumable, SceneConstructor, combatCharacter, fight}
+		BaseType _baseType = BaseType.thought;
 		Type _type;
 		bool showList = false;
 		BaseCollection _base;
@@ -31,8 +31,8 @@ namespace RD.DB
 				#region Combat
 				GUILayout.Label("COMBAT");
 				GUILayout.BeginHorizontal();
-				if (GUILayout.Button("Cards", GUILayout.Width(150)))
-					ChangeType(BaseType.card);
+				if (GUILayout.Button("Thoughts", GUILayout.Width(150)))
+					ChangeType(BaseType.thought);
 				if (GUILayout.Button("Effects", GUILayout.Width(150)))
 					ChangeType(BaseType.effect);
 				GUILayout.EndHorizontal();
@@ -115,11 +115,11 @@ namespace RD.DB
 				if (GUILayout.Button("Back", GUILayout.Width(100)))
 					Back();
 				GUI.color = defaultColor;
-				if (_baseType == BaseType.card)
+				if (_baseType == BaseType.thought)
 				{
 					GUILayout.Space(50);
 					if (GUILayout.Button("Update Descriptions", GUILayout.Width(200)))
-						_base.UpdateDescriptionsCards();
+						_base.UpdateDescriptionsThoughts();
 					GUILayout.Space(50);
 				}
 				else if (_baseType == BaseType.Hyperlink)
@@ -155,9 +155,9 @@ namespace RD.DB
 					GUILayout.Label(new GUIContent(bo != null ? bo._name : "-", bo != null?bo._description:"-"), GUILayout.Width(150));
 					switch (_baseType)
 					{
-						case BaseType.card:
-							bo = (BaseCard)_displayList[i];
-							bo = (BaseCard)EditorGUILayout.ObjectField(bo, typeof(BaseCard), false);
+						case BaseType.thought:
+							bo = (BaseThought)_displayList[i];
+							bo = (BaseThought)EditorGUILayout.ObjectField(bo, typeof(BaseThought), false);
 							break;
 						case BaseType.effect:
 							bo = (BaseEffect)_displayList[i];
@@ -230,8 +230,8 @@ namespace RD.DB
 					{
 						switch (_baseType)
 						{
-							case BaseType.card:
-								_displayList.Add(Copy<BaseCard>(bo));
+							case BaseType.thought:
+								_displayList.Add(Copy<BaseThought>(bo));
 								break;
 							case BaseType.effect:
 								_displayList.Add(Copy<BaseEffect>(bo));
@@ -297,10 +297,10 @@ namespace RD.DB
 				Sort();
 				switch (_baseType)
 				{
-					case BaseType.card:
-						_base._cards.Clear();
+					case BaseType.thought:
+						_base._thoughts.Clear();
 						foreach(BaseObject bo in _displayList)
-							_base._cards.Add((BaseCard)bo);
+							_base._thoughts.Add((BaseThought)bo);
 						break;
 					case BaseType.aura:
 						_base._auras.Clear();
@@ -389,8 +389,8 @@ namespace RD.DB
 			_displayList = new List<BaseObject>();
 			switch (_baseType)
 			{
-				case BaseType.card:
-					_displayList.AddRange(_base._cards);
+				case BaseType.thought:
+					_displayList.AddRange(_base._thoughts);
 					break;
 				case BaseType.effect:
 					_displayList.AddRange(_base._effects);
@@ -502,7 +502,7 @@ namespace RD.DB
 		}
 		public void IDScrub()
 		{
-			ScrubList<BaseCard>();
+			ScrubList<BaseThought>();
 			ScrubList<BaseEffect>();
 			ScrubList<BaseAura>();
 			ScrubList<BaseRequirement>();

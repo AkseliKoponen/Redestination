@@ -17,7 +17,7 @@ namespace RD
 		public bool locked = false;
 		string totalText;
 		int maxLines = 5;
-		int maxChars = 135;
+		public static int maxChars = 135;
 		public void SetMaxLines(int max = 5)
 		{
 			if (max <= 0)
@@ -28,8 +28,6 @@ namespace RD
 		public void Toggle(BaseObject obj)
 		{
 			gameObject.SetActive(true);
-			if (_nameText.text.Equals(obj._name))
-				return;
 			_nameText.text = obj._name;
 			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
@@ -37,8 +35,6 @@ namespace RD
 		public void Toggle(Item obj)
 		{
 			gameObject.SetActive(true);
-			if (_nameText.text.Equals(obj._name))
-				return;
 			_nameText.text = obj._name;
 			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
@@ -48,8 +44,6 @@ namespace RD
 		public void Toggle(Weapon obj)
 		{
 			gameObject.SetActive(true);
-			if (_nameText.text.Equals(obj._name))
-				return;
 			_nameText.text = obj._name;
 			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
@@ -59,8 +53,6 @@ namespace RD
 		public void Toggle(Equipment obj)
 		{
 			gameObject.SetActive(true);
-			if (_nameText.text.Equals(obj._name))
-				return;
 			_nameText.text = obj._name;
 			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
@@ -70,8 +62,6 @@ namespace RD
 		public void Toggle(Consumable obj)
 		{
 			gameObject.SetActive(true);
-			if (_nameText.text.Equals(obj._name))
-				return;
 			_nameText.text = obj._name;
 			totalText = obj.GetLimitedDescription(maxChars);
 			SetDescription();
@@ -89,6 +79,9 @@ namespace RD
 		}
 		void SetDescription()
 		{
+			_nameText.fontSizeMin = 18 + GameSettings.UISettings._textSize * 4;
+			_nameText.fontSizeMax = 20 + GameSettings.UISettings._textSize * 4;
+			_descriptionText.fontSize = 16 + GameSettings.UISettings._textSize * 4;
 			totalText = Translator.PrepGenericText(totalText);
 			_descriptionText.maxVisibleLines = maxLines;
 			_descriptionText.text = totalText;

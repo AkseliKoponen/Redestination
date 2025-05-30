@@ -87,7 +87,7 @@ namespace RD.Combat
 			{
 				hpString += "\n<color=#00AEC6>Barrier: " + (barrier==default?_cc._stats.barrier.current:barrier)+ "</color>";
 			}
-			_healthText.text = hpString; 
+			_healthText.text = hpString;
 		}
 		private void Update()
 		{
@@ -169,18 +169,22 @@ namespace RD.Combat
 			//Debug.Log("ToggleText of "+_cc.GetName() +" = "+ show);
 			if (_nameText == null || _healthText == null)
 				return;
-			if (show) {
+			if (show)
+			{
+				_healthText.fontSize = 12 + GameSettings.UISettings._textSize * 3;
+				_nameText.fontSizeMax = 18 + GameSettings.UISettings._textSize * 4;
 				RectTransform boxT = _healthText.transform.parent.GetComponent<RectTransform>();
 				Vector2 sizeDelta = boxT.sizeDelta;
 				sizeDelta.y = _healthText.preferredHeight+18;
 				sizeDelta.x = _healthText.preferredWidth+18;
-				//sizeDelta.y = 20 + _healthText.preferredHeight + 5;
 				boxT.sizeDelta = sizeDelta;
-
-				sizeDelta = _nameText.transform.parent.GetComponent<RectTransform>().sizeDelta;
-				sizeDelta.x = _nameText.preferredWidth + 8;
-				_nameText.transform.parent.GetComponent<RectTransform>().sizeDelta = sizeDelta;
 				boxT.localPosition = new Vector3(boxT.localPosition.x, _healthTextOriginalY);
+
+				boxT = _nameText.transform.parent.GetComponent<RectTransform>();
+				sizeDelta = boxT.sizeDelta;
+				sizeDelta.x = _nameText.preferredWidth + 8;
+				sizeDelta.y = _nameText.preferredHeight + 8;
+				boxT.sizeDelta = sizeDelta;
 			}
 			_nameText.transform.parent.gameObject.SetActive(show);
 			_healthText.transform.parent.gameObject.SetActive(show);

@@ -9,6 +9,7 @@ namespace RD.DB
 	[CreateAssetMenu(fileName = "New Collection", menuName = "Redestination/BaseCollection", order = 1)]
 	public class BaseCollection : ScriptableObject
 	{
+		public List<BaseThought> _thoughts;
 		public List<BaseCard> _cards;
 		public List<BaseEffect> _effects;
 		public List<BaseAura> _auras;
@@ -46,6 +47,7 @@ namespace RD.DB
 			if (_hyperlinks == null) _hyperlinks = new List<Hyperlink>();
 			if (_combatCharacters == null) _combatCharacters = new List<BaseCombatCharacter>();
 		}
+		public int _idThought;
 		public int _idCard;
 		public int _idEffect;
 		public int _idAura;
@@ -271,9 +273,9 @@ namespace RD.DB
 			s = "_id" + s;
 			return s;
 		}
-		public void UpdateDescriptionsCards()
+		public void UpdateDescriptionsThoughts()
 		{
-			foreach (BaseCard bo in _cards)
+			foreach (BaseThought bo in _thoughts)
 			{
 				bo.UpdateDescription(this);
 			}
@@ -292,6 +294,7 @@ namespace RD.DB
 			searchstr = searchstr.ToLower();
 			List<BaseObject> list = new List<BaseObject>();
 			list.Clear(); list.AddRange(_cards); SearchNameAndDescription(list, typeof(BaseCard));
+			list.Clear(); list.AddRange(_thoughts); SearchNameAndDescription(list, typeof(BaseThought));
 			list.Clear(); list.AddRange(_effects); SearchNameAndDescription(list, typeof(BaseEffect));
 			list.Clear(); list.AddRange(_auras); SearchNameAndDescription(list, typeof(BaseAura));
 			list.Clear(); list.AddRange(_requirements); SearchNameAndDescription(list, typeof(BaseRequirement));

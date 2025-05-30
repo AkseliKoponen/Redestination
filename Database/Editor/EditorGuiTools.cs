@@ -7,11 +7,13 @@ using UnityEditor;
 using UnityEngine;
 using static RD.CodeTools;
 using TMPro;
+using System.IO;
 
 namespace RD.DB
 {
 	public static class EditorGuiTools
 	{
+		static List<string> _fillSprites;
 		public static bool _simpleMove = true;
 		static List<string> hiddenFields = new List<string> { "_actualDescription", "_hostileArena","_friendlyArena","_linkToPast" };
 		public static System.Object DrawClassFields(System.Object _class, float indent = 0, bool sameRow = false, bool useLayoutSpace = false)
@@ -77,7 +79,15 @@ namespace RD.DB
 				#region Exceptions
 				if (name == "NameCombinationNoun" || name == "NameCombinationAdjective")
 				{
-					if (_class.GetType() == typeof(BaseCard))
+					if(_class.GetType() == typeof(BaseThought))
+					{
+						BaseThought bt = (BaseThought)_class;
+						if (!bt._thoughtClass.HasFlag(BaseThought.ThoughtClass.Inventor))
+						{
+							continue;
+						}
+					}
+					else if (_class.GetType() == typeof(BaseCard))
 					{
 						BaseCard bc = (BaseCard)_class;
 						if (!bc._cardClass.HasFlag(BaseCard.CardClass.Inventor))
@@ -238,12 +248,49 @@ namespace RD.DB
 						field.SetValue(_class, (Vector2)EditorGUILayout.Vector2Field(name, (Vector2)field.GetValue(_class)));
 						break;
 					case "Sprite":
-						field.SetValue(_class, EditorGUILayout.ObjectField((Sprite)field.GetValue(_class), typeof(Sprite), false));
-						Sprite spr = (Sprite)field.GetValue(_class);
-						if (spr != null)
+						if (name == "ArtFillPattern")
 						{
-							Vector2 spriteSize = GetSpritePreviewSize(name);
-							GUILayout.Box(CodeTools.textureFromSprite(spr), GUILayout.Width(spriteSize.x), GUILayout.Height(spriteSize.y));
+							if (_fillSprites!=null)
+							{
+								
+								int currentIndex = -1;
+								if ((Sprite)field.GetValue(_class) != null)
+								{
+									string str = ((Sprite)field.GetValue(_class)).name+".png";
+									for(int i = 0;i<_fillSprites.Count && currentIndex<0;i++)
+										if (_fillSprites[i].Equals(str))
+											currentIndex = i;
+								}
+								
+								int tempIndex = currentIndex;
+								currentIndex = EditorGUILayout.Popup(currentIndex, _fillSprites.ToArray());
+								if (tempIndex != currentIndex)
+								{
+									//Chose different option than the current one -> load the new sprite and exit
+									Sprite sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Resources/Art/Mind/ThoughtFillings/" + _fillSprites[currentIndex],typeof(Sprite));
+									field.SetValue(_class, sprite);
+								}
+								
+							}
+							else if (GUILayout.Button("Load", GUILayout.Width(100)))
+							{
+								string path = Application.dataPath + "/Resources/Art/Mind/ThoughtFillings/";
+								DirectoryInfo dir = new DirectoryInfo(path);
+								_fillSprites = new List<string>();
+								foreach (FileInfo fi in dir.GetFiles("*.png"))
+									_fillSprites.Add(fi.Name);
+							}
+						}
+						else
+						{
+							field.SetValue(_class, EditorGUILayout.ObjectField((Sprite)field.GetValue(_class), typeof(Sprite), false));
+						
+							Sprite spr = (Sprite)field.GetValue(_class);
+							if (spr != null)
+							{
+								Vector2 spriteSize = GetSpritePreviewSize(name);
+								GUILayout.Box(CodeTools.textureFromSprite(spr), GUILayout.Width(spriteSize.x), GUILayout.Height(spriteSize.y));
+							}
 						}
 						break;
 					case "Color":
@@ -306,39 +353,43 @@ namespace RD.DB
 					case "MovementType":
 						field.SetValue(_class, EditorGUILayout.EnumPopup((BaseEffect.MovementType)field.GetValue(_class)));
 						break;
-					case "CardTarget":
-						field.SetValue(_class, EditorGUILayout.EnumPopup((BaseEffect.CardTargeting.CardTarget)field.GetValue(_class)));
-						break;
-					case "CardModification":
-						var _cardModification = (BaseEffect.CardModification)field.GetValue(_class);
-						GUILayout.EndHorizontal();
-						GUILayout.BeginVertical();
-						field.SetValue(_class, (BaseEffect.CardModification)DrawClassFields(_cardModification, 0, false));
-						break;
-					case "CardTargeting":
-						var _cardTargeting = (BaseEffect.CardTargeting)field.GetValue(_class);
-						GUILayout.EndHorizontal();
-						GUILayout.BeginVertical();
-						field.SetValue(_class, (BaseEffect.CardTargeting)DrawClassFields(_cardTargeting, 0, false));
-						break;
-					case "CardManagement":
-						var _cardManagement = (BaseEffect.CardManagement)field.GetValue(_class);
-						GUILayout.EndHorizontal();
-						GUILayout.BeginVertical();
-						field.SetValue(_class, (BaseEffect.CardManagement)DrawClassFields(_cardManagement, 1, false));
-						break;
-					case "CardRecovery":
-						var _cardRecovery = (BaseEffect.CardRecovery)field.GetValue(_class);
-						GUILayout.EndHorizontal();
-						GUILayout.BeginVertical();
-						field.SetValue(_class, (BaseEffect.CardRecovery)DrawClassFields(_cardRecovery, 0, false));
-						break;
-					case "AddCard":
-						var _addCard = (BaseEffect.AddCard)field.GetValue(_class);
-						GUILayout.EndHorizontal();
-						GUILayout.BeginVertical();
-						field.SetValue(_class, (BaseEffect.AddCard)DrawClassFields(_addCard, 0, false));
-						break;
+					#region Legacy
+					/*
+				case "CardTarget":
+					field.SetValue(_class, EditorGUILayout.EnumPopup((BaseEffect.CardTargeting.CardTarget)field.GetValue(_class)));
+					break;
+				case "CardModification":
+					var _cardModification = (BaseEffect.CardModification)field.GetValue(_class);
+					GUILayout.EndHorizontal();
+					GUILayout.BeginVertical();
+					field.SetValue(_class, (BaseEffect.CardModification)DrawClassFields(_cardModification, 0, false));
+					break;
+				case "CardTargeting":
+					var _cardTargeting = (BaseEffect.CardTargeting)field.GetValue(_class);
+					GUILayout.EndHorizontal();
+					GUILayout.BeginVertical();
+					field.SetValue(_class, (BaseEffect.CardTargeting)DrawClassFields(_cardTargeting, 0, false));
+					break;
+				case "CardManagement":
+					var _cardManagement = (BaseEffect.CardManagement)field.GetValue(_class);
+					GUILayout.EndHorizontal();
+					GUILayout.BeginVertical();
+					field.SetValue(_class, (BaseEffect.CardManagement)DrawClassFields(_cardManagement, 1, false));
+					break;
+				case "CardRecovery":
+					var _cardRecovery = (BaseEffect.CardRecovery)field.GetValue(_class);
+					GUILayout.EndHorizontal();
+					GUILayout.BeginVertical();
+					field.SetValue(_class, (BaseEffect.CardRecovery)DrawClassFields(_cardRecovery, 0, false));
+					break;
+				case "AddCard":
+					var _addCard = (BaseEffect.AddCard)field.GetValue(_class);
+					GUILayout.EndHorizontal();
+					GUILayout.BeginVertical();
+					field.SetValue(_class, (BaseEffect.AddCard)DrawClassFields(_addCard, 0, false));
+					break;
+					*/
+					#endregion
 					case "ApplyAura":
 						var _applyAura = (BaseEffect.ApplyAura)field.GetValue(_class);
 						field.SetValue(_class, (BaseEffect.ApplyAura)DrawClassFields(_applyAura, 0, true));
@@ -351,7 +402,8 @@ namespace RD.DB
 						field.SetValue(_class, EditorGUILayout.EnumPopup((BaseEffect.DamageType)field.GetValue(_class)));
 						break;
 					#endregion
-					#region BaseCard Fields
+					#region DEPRECATED BaseCard Fields
+						/*
 					case "BaseCard":
 						field.SetValue(_class, (BaseCard)EditorGUILayout.ObjectField((BaseCard)field.GetValue(_class), type, false));
 						break;
@@ -389,6 +441,52 @@ namespace RD.DB
 					case "EffectTarget":
 						var _effectTarget = (BaseCard.EffectTarget)field.GetValue(_class);
 						field.SetValue(_class, (BaseCard.EffectTarget)DrawClassFields(_effectTarget, 0, true));
+						break;
+					*/
+					#endregion
+					#region BaseThought Fields
+					case "BaseThought":
+						field.SetValue(_class, (BaseThought)EditorGUILayout.ObjectField((BaseThought)field.GetValue(_class), type, false));
+						break;
+					case "MultiTargetType":
+						field.SetValue(_class, EditorGUILayout.EnumPopup((BaseThought.MultiTargetType)field.GetValue(_class)));
+						break;
+					case "TargetType":
+						field.SetValue(_class, EditorGUILayout.EnumPopup((BaseThought.TargetType)field.GetValue(_class), GUILayout.Width(60)));
+						break;
+					case "Target":
+						field.SetValue(_class, EditorGUILayout.EnumFlagsField((BaseThought.Target)field.GetValue(_class)));
+						break;
+					case "ThoughtClass":
+						field.SetValue(_class, EditorGUILayout.EnumFlagsField((BaseThought.ThoughtClass)field.GetValue(_class)));
+						break;
+					case "ThoughtType":
+						field.SetValue(_class, EditorGUILayout.EnumPopup((BaseThought.ThoughtType)field.GetValue(_class)));
+						break;
+					case "CharacterRequirement":
+						var _reqTarget = (BaseThought.CharacterRequirement)field.GetValue(_class);
+						field.SetValue(_class, (BaseThought.CharacterRequirement)DrawClassFields(_reqTarget, 0, true));
+						break;
+					case "Behaviour":
+						var _effectTarget = (BaseThought.Behaviour)field.GetValue(_class);
+						field.SetValue(_class, (BaseThought.Behaviour)DrawClassFields(_effectTarget, 0, true));
+						break;
+					case "ThoughtShape":
+						if(_class.GetType() == typeof(BaseThought))
+						{
+							GUILayout.BeginVertical();
+							field.SetValue(_class, EditorGUILayout.EnumPopup((RD.UI.ThoughtUI.ThoughtShape)field.GetValue(_class)));
+							if (GUILayout.Button("Preview"))
+							{
+								BaseThoughtEditor.Preview((BaseThought)_class);
+							}
+							GUILayout.EndVertical();
+						}
+						else
+							field.SetValue(_class, EditorGUILayout.EnumPopup((RD.UI.ThoughtUI.ThoughtShape)field.GetValue(_class)));
+						break;
+					case "ThoughtPosition":
+						field.SetValue(_class, EditorGUILayout.EnumFlagsField((BaseThought.ThoughtPosition)field.GetValue(_class)));
 						break;
 					#endregion
 					#region BaseAura Fields
@@ -530,6 +628,9 @@ namespace RD.DB
 								case "BaseCard":
 									DrawList((List<BaseCard>)field.GetValue(_class), typeof(BaseCard), _class, field);
 									break;
+								case "BaseThought":
+									DrawList((List<BaseThought>)field.GetValue(_class), typeof(BaseThought), _class, field);
+									break;
 								case "BaseEffect":
 									DrawList((List<BaseEffect>)field.GetValue(_class), typeof(BaseEffect), _class, field);
 									break;
@@ -549,11 +650,22 @@ namespace RD.DB
 								case "ApplyAura":
 									DrawList((List<BaseEffect.ApplyAura>)field.GetValue(_class), typeof(BaseEffect.ApplyAura), _class, field);
 									break;
+								case "ThoughtModification":
+									DrawList((List<BaseThought.ThoughtModification>)field.GetValue(_class), typeof(BaseThought.ThoughtModification), _class, field);
+									break;
+									/*
+									 * LEGACY
 								case "EffectTarget":
 									DrawList((List<BaseCard.EffectTarget>)field.GetValue(_class), typeof(BaseCard.EffectTarget), _class, field);
 									break;
 								case "RequirementTarget":
 									DrawList((List<BaseCard.RequirementTarget>)field.GetValue(_class), typeof(BaseCard.RequirementTarget), _class, field);
+									break;*/
+								case "CharacterRequirement":
+									DrawList((List<BaseThought.CharacterRequirement>)field.GetValue(_class), typeof(BaseThought.CharacterRequirement), _class, field);
+									break; 
+								case "Behaviour":
+									DrawList((List<BaseThought.Behaviour>)field.GetValue(_class), typeof(BaseThought.Behaviour), _class, field);
 									break;
 								case "ParticleEffect":
 									DrawList((List<BaseFX.ParticleEffect>)field.GetValue(_class), typeof(BaseFX.ParticleEffect), _class, field);
@@ -569,9 +681,6 @@ namespace RD.DB
 									break;
 								case "PowerEffect":
 									DrawList((List<BaseAura.PowerEffect>)field.GetValue(_class), typeof(BaseAura.PowerEffect), _class, field);
-									break;
-								case "BaseObject":
-									DrawList((List<BaseObject>)field.GetValue(_class), typeof(BaseObject), _class, field);
 									break;
 								case "TalentTrigger":
 									DrawList((List<BaseTalent.TalentTrigger>)field.GetValue(_class), typeof(BaseTalent.TalentTrigger), _class, field);
@@ -640,7 +749,7 @@ namespace RD.DB
 
 			if (GUILayout.Button("+", GUILayout.Width(30)))
 			{
-				_list.Add(null);//(BaseObject)ScriptableObject.CreateInstance(type));
+				_list.Add(null);
 			}
 
 			GUILayout.BeginVertical();
@@ -660,6 +769,58 @@ namespace RD.DB
 			}
 			GUILayout.EndVertical();
 
+		}
+		static void DrawList(List<BaseThought.ThoughtModification> _list, Type type, System.Object _class, FieldInfo field)
+		{
+
+			if (GUILayout.Button("+", GUILayout.Width(30)))
+			{
+				_list.Add(new BaseThought.ThoughtModification());
+			}
+
+			GUILayout.BeginVertical();
+			for (int i = 0; i < _list.Count; i++)
+			{
+
+				GUILayout.BeginHorizontal();
+				if (GUILayout.Button("-", GUILayout.Width(30)))
+				{
+					_list.RemoveAt(i);
+					GUILayout.EndHorizontal();
+					break;
+				}
+
+				_list[i] = (BaseThought.ThoughtModification)DrawClassFields(_list[i], 0, true);
+				field.SetValue(_class, _list);
+				GUILayout.EndHorizontal();
+			}
+			GUILayout.EndVertical();
+
+		}
+		static void DrawList(List<BaseThought> _list, Type type, System.Object _class, FieldInfo field)
+		{
+
+			if (GUILayout.Button("+", GUILayout.Width(30)))
+			{
+				_list.Add(null);
+			}
+
+			GUILayout.BeginVertical();
+			for (int i = 0; i < _list.Count; i++)
+			{
+
+				GUILayout.BeginHorizontal();
+				if (GUILayout.Button("-", GUILayout.Width(30)))
+				{
+					_list.RemoveAt(i);
+					GUILayout.EndHorizontal();
+					break;
+				}
+				_list[i] = (BaseThought)EditorGUILayout.ObjectField(_list[i], type, false);
+				field.SetValue(_class, _list);
+				GUILayout.EndHorizontal();
+			}
+			GUILayout.EndVertical();
 		}
 		static void DrawList(List<BaseCard> _list, Type type, System.Object _class, FieldInfo field)
 		{
@@ -870,12 +1031,12 @@ namespace RD.DB
 			GUILayout.EndVertical();
 
 		}
-		static void DrawList(List<BaseCard.EffectTarget> _list, Type type, System.Object _class, FieldInfo field)
+		static void DrawList(List<BaseThought.Behaviour> _list, Type type, System.Object _class, FieldInfo field)
 		{
 			GUILayout.Space(-50);
 			if (GUILayout.Button("+", GUILayout.Width(30)))
 			{
-				_list.Add(new BaseCard.EffectTarget(true));
+				_list.Add(new BaseThought.Behaviour(true));
 			}
 			GUILayout.BeginVertical();
 			for (int i = 0; i < _list.Count; i++)
@@ -897,18 +1058,18 @@ namespace RD.DB
 					GUILayout.EndHorizontal();
 					break;
 				}
-				_list[i] = (BaseCard.EffectTarget)DrawClassFields(_list[i], 0, true);
+				_list[i] = (BaseThought.Behaviour)DrawClassFields(_list[i], 0, true);
 				field.SetValue(_class, _list);
 				GUILayout.EndHorizontal();
 			}
 			GUILayout.EndVertical();
 
 		}
-		static void DrawList(List<BaseCard.RequirementTarget> _list, Type type, System.Object _class, FieldInfo field)
+		static void DrawList(List<BaseThought.CharacterRequirement> _list, Type type, System.Object _class, FieldInfo field)
 		{
 			if (GUILayout.Button("+", GUILayout.Width(30)))
 			{
-				_list.Add(new BaseCard.RequirementTarget(true));
+				_list.Add(new BaseThought.CharacterRequirement(true));
 			}
 
 			GUILayout.BeginVertical();
@@ -923,7 +1084,7 @@ namespace RD.DB
 					GUILayout.EndHorizontal();
 					break;
 				}
-				_list[i] = (BaseCard.RequirementTarget)DrawClassFields(_list[i], 0, true);
+				_list[i] = (BaseThought.CharacterRequirement)DrawClassFields(_list[i], 0, true);
 				field.SetValue(_class, _list);
 				GUILayout.EndHorizontal();
 			}

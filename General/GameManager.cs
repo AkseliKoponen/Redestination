@@ -43,8 +43,9 @@ namespace RD
 		private void Awake()
 		{
 			_current = this;
+			GameSettings.UISettings._textSize = 0;
 			SceneHandler.Init();
-			CodeTools.InitDatabase();
+			CodeTools.LoadDatabase();
 			Cameras.Initialize(gameObject);
 			Object.DontDestroyOnLoad(gameObject);
 			_storyVariables = new StoryVariables();
@@ -189,6 +190,7 @@ namespace RD
 			{
 				default:
 					Debug.LogError("Unknown Scene ('" + scene + "')");
+					GameManager._current.StartCoroutine(LoadScene(scene, false));
 					break;
 				case "dialog":
 					EnterBaseScene((SceneConstructor)CodeTools.db.Get <SceneConstructor>(3));
@@ -208,8 +210,8 @@ namespace RD
 				case "mainmenu":
 					GameManager._current.StartCoroutine(LoadScene("MainMenu", false));
 					break;
-				case "movement":
-					GameManager._current.StartCoroutine(LoadScene("Movement", false));
+				case "mind":
+					GameManager._current.StartCoroutine(LoadScene("Mind", false));
 					break;
 				case "combat":
 					EnterBaseScene((SceneConstructor)CodeTools.db.Get<SceneConstructor>("Combat Test"));
@@ -366,6 +368,10 @@ namespace RD
 	{
 		public static class UISettings
 		{
+			/// <summary>
+			/// 0-2 default is smallest and 0
+			/// </summary>
+			public static int _textSize = 0;
 			static float _endTurnDelayPC = 0.5f;
 			static float _endTurnDelayNPC = 0.5f;
 			public static bool _automaticTurnEnd = false;

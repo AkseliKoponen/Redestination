@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,32 +17,48 @@ namespace RD
 	{
 		public static BaseCollection db { get; private set; }
 		public static bool dbLoad { get; private set; } = false;
-		public static void InitDatabase()
+		/// <summary>
+		/// Load the database, if it has not yet been loaded
+		/// </summary>
+		public static void LoadDatabase()
 		{
 			if (dbLoad)
 				return;
 			db = Resources.Load<BaseCollection>("Database/Collection");//.asset");
-			
 			dbLoad = true;
 
 		}
 		public static CombatManager _combatManager { get; private set; }
 		public static PostProcessingManager _postProcessingManager { get; private set; }
 		public static CombatGUI _combatGUI { get; private set; }
+		/// <summary>
+		/// Return the opposite color of <paramref name="c"/>
+		/// </summary>
+		/// <param name="c"></param>
+		/// <param name="negateAlpha">Also negate alpha (from 0 to 1 etc)</param>
+		/// <returns></returns>
 		public static Color NegativeColor(Color c, bool negateAlpha = false) {
 			Color neg = new Color(1 - c.r, 1 - c.g, 1 - c.b, (negateAlpha ? 1 - c.a : c.a));
 			return neg;
 		}
+
+		/// <summary>
+		/// Get the opposite of <paramref name="f"/>
+		/// </summary>
 		public static Facing GetReverseFacing(Facing f)
 		{
 			if (f == Facing.Left)
 				return Facing.Right;
 			return Facing.Left;
 		}
+
 		[Serializable]
 		public enum Corner { TopLeft,TopRight,BottomLeft,BottomRight}
+		/// <summary>
+		/// int with a max and min (inclusive) values. Use current to get value and methods like Add() to modify values
+		/// </summary>
 		[Serializable]
-		public struct Bint //BaseInt (max and min values)
+		public struct Bint 
 		{
 			public int current;
 			public int max;
@@ -155,8 +172,12 @@ namespace RD
 				current = min + Mathf.RoundToInt((max-min) * f);
 			}
 		}
+
+		/// <summary>
+		/// float with max and min values. Use current to get value and methods like Add() to modify values
+		/// </summary>
 		[Serializable]
-		public struct Bfloat //BaseFloat (max and min values)
+		public struct Bfloat
 		{
 			public float current;
 			public float max;
@@ -225,54 +246,98 @@ namespace RD
 				return percentage * (max - min);
 			}
 		}
+		/// <summary>
+		/// A position in grid based system (int)
+		/// </summary>
 		[Serializable]
-		public enum Polarity { Neutral, Negative, Positive}
-		public static bool ParseBool(string str, bool def = false)
+		public struct GridPoint
 		{
-			if (str == "" || str == "FALSE")
-				return false;
-			else if (str == "TRUE")
-				return true;
-			else
+			public static bool dbug = false;
+			public int x;
+			public int y;
+			public void Add(GridPoint gp)
 			{
-				Debug.LogError("Error parsing " + str + ". Returning FALSE");
-				return false;
+				x += gp.x;
+				y += gp.y;
+			}
+			public GridPoint(int _x, int _y)
+			{
+				x = _x;
+				y = _y;
+			}
+			public GridPoint(GridPoint gp)
+			{
+				x = gp.x;
+				y = gp.y;
+			}
+			/// <summary>
+			/// Change the point position in relation to zero when rotating by 90 degrees
+			/// </summary>
+			/// <param name="clockwise">Is the direction of the rotation clockwise?</param>
+			public void Rotate(bool clockwise = true)
+			{
+				(x, y) = (y, x); //swap x and y
+				if (!clockwise)
+				{
+					y = -y;
+				}
+				else
+				{
+					x = -x;
+				}
+			}
+			public string ToString()
+			{
+				return "(" + x + "," + y + ")";
 			}
 		}
-		public static int ParseInt(string str, int def = 0)
+		/// <summary>
+		/// WORK IN PROGRESS. Returns cursor position in World Space, currently only mouse support.
+		/// </summary>
+		public static Vector3 GetCursorPosition()
 		{
-			if (str == "") { return def; }
-			else return int.Parse(str);
+			return Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 		}
-		public static float ParseFloat(string str, int def = 0)
+		/// <summary>
+		/// Change the <paramref name="point"/> position in relation to zero when rotating by 90 degrees clockwise
+		/// </summary>
+		public static Vector2 RotateBy90(Vector2 point, bool clockwise = true)
 		{
-			if (str == "") { return def; }
-			else return float.Parse(str);
+			(point.x, point.y) = (point.y, point.x);
+			if (!clockwise)
+			{
+				point.y = -point.y;
+			}
+			else
+			{
+				point.x = -point.x;
+			}
+			return point;
 		}
-		public static void SetCombatManager(CombatManager cm)
-		{
-			//Debug.Log("CombatManager Set");
-			_combatManager = cm;
-		}
-		public static void SetCombatGUI(CombatGUI gui)
-		{
-			_combatGUI = gui;
-		}
-		public static void SetPostProcessingManager(PostProcessingManager ppm)
-		{
-			_postProcessingManager = ppm;
-		}
-		public static int MultiplyInt(int i, float multiplier) {
-			float fi = i * multiplier;
-			i = Mathf.RoundToInt(fi);
-			return i;
-		}
+		/// <summary>
+		/// Bool with a third option (-0+)
+		/// </summary>
+		[Serializable]
+		public enum Polarity { Neutral, Negative, Positive}
+
+		/// <summary>
+		/// Get Hue, Saturation and Ligthness of the color <paramref name="c"/>
+		/// </summary>
+		/// <param name="c"></param>
+		/// <returns>(H,S,V)</returns>
 		public static Vector3 GetHSV(Color c)
 		{
 			Vector3 v3 = new Vector3();
 			Color.RGBToHSV(c, out v3.x, out v3.y, out v3.z);
 			return v3;
 		}
+
+		/// <summary>
+		/// Turn <paramref name="sprite"/> into a Texture2D
+		/// </summary>
+		/// <param name="sprite"></param>
+		/// <param name="maxDimensions"></param>
+		/// <returns></returns>
 		public static Texture2D textureFromSprite(Sprite sprite, Vector2 maxDimensions = new Vector2())
 		{	//Untested whether maxdimension works!
 			int height = (int)sprite.textureRect.width;
@@ -305,12 +370,29 @@ namespace RD
 			else
 				return sprite.texture;
 		}
+		#region Copy Fields and Properties
+		/// <summary>
+		/// Copy every field AND property with same name and type <paramref name="from"/> <paramref name="to"/>
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <param name="typeB"></param>
+		/// <param name="dbug">if true Debug.Log information about the copy process</param>
+		/// <returns><paramref name="to"/> with copied fields and properties</returns>
 		public static System.Object CopyEverything(System.Object from, System.Object to, Type typeB, bool dbug = false)
 		{
 			CopyBaseFields(from, to, typeB, dbug);
 			CopyBaseProperties(from, to, typeB, dbug);
 			return to;
 		}
+		/// <summary>
+		/// Copy every field with same name and type <paramref name="from"/> <paramref name="to"/>
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <param name="typeB"></param>
+		/// <param name="dbug">if true Debug.Log information about the copy process</param>
+		/// <returns><paramref name="to"/> with copied fields</returns>
 		public static System.Object CopyBaseFields(System.Object from, System.Object to, Type typeB, bool dbug = false)
 		{
 			if (dbug)
@@ -359,6 +441,14 @@ namespace RD
 			}
 			return to;
 		}
+		/// <summary>
+		/// Copy every property with same name and type <paramref name="from"/> <paramref name="to"/>
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <param name="typeB"></param>
+		/// <param name="dbug">if true Debug.Log information about the copy process</param>
+		/// <returns><paramref name="to"/> with copied properties</returns>
 		public static System.Object CopyBaseProperties(System.Object from, System.Object to, Type typeB, bool dbug = false)
 		{
 			if (dbug)
@@ -402,21 +492,36 @@ namespace RD
 			}
 			return to;
 		}
-		public static string RemoveLineEndings(this string value)
+		#endregion
+
+		/// <summary>
+		/// Remove all new line symbols from <paramref name="str"/>
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns><paramref name="str"/> without LineEndings</returns>
+		public static string RemoveLineEndings(this string str)
 		{
-			if (String.IsNullOrEmpty(value))
+			if (String.IsNullOrEmpty(str))
 			{
-				return value;
+				return str;
 			}
 			string lineSeparator = ((char)0x2028).ToString();
 			string paragraphSeparator = ((char)0x2029).ToString();
 
-			return value.Replace("\r\n", string.Empty)
+			return str.Replace("\r\n", string.Empty)
 						.Replace("\n", string.Empty)
 						.Replace("\r", string.Empty)
 						.Replace(lineSeparator, string.Empty)
 						.Replace(paragraphSeparator, string.Empty);
 		}
+
+		/// <summary>
+		/// Clamp <paramref name="vtr"/> like it was a float
+		/// </summary>
+		/// <param name="vtr"></param>
+		/// <param name="min"></param>
+		/// <param name="max"></param>
+		/// <returns><paramref name="vtr"/> with clamped values</returns>
 		public static Vector3 ClampVector3(Vector3 vtr, float min, float max)
 		{
 			vtr.x = Mathf.Clamp(vtr.x, min, max);
@@ -424,6 +529,13 @@ namespace RD
 			vtr.z = Mathf.Clamp(vtr.z, min, max);
 			return vtr;
 		}
+
+		/// <summary>
+		/// Remove all occurrences of <paramref name="c"/> in <paramref name="str"/>
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="c"></param>
+		/// <returns><paramref name="str"/> without <paramref name="c"/></returns>
 		public static string RemoveChars(string str, char c)
 		{
 			while (str.Contains(c))
@@ -432,6 +544,12 @@ namespace RD
 			}
 			return str;
 		}
+
+		/// <summary>
+		/// Change the pivot of <paramref name="rectTransform"/> without changing position
+		/// </summary>
+		/// <param name="rectTransform"></param>
+		/// <param name="pivot"></param>
 		public static void SetPivot(this RectTransform rectTransform, Vector2 pivot)
 		{
 			Vector3 deltaPosition = rectTransform.pivot - pivot;    // get change in pivot
@@ -442,26 +560,19 @@ namespace RD
 			rectTransform.pivot = pivot;                            // change the pivot
 			rectTransform.localPosition -= deltaPosition;           // reverse the position change
 		}
-		public static string Plural(int count)
-		{
-			if (count > 1)
-				return "s";
-			else
-				return "";
-		}
-		public static string CutString(string s, int length)
-		{
-			int previousSpaceIndex = s.Substring(0, length - 1).LastIndexOf(" ");
-			return s.Substring(0, previousSpaceIndex)+" ...";
-		}
+		/// <summary>
+		/// Slice <paramref name="s"/> into multiple strings separated by <paramref name="slicer"/>
+		/// </summary>
+		/// <param name="s">The string to slice</param>
+		/// <param name="slicer">The slicer chars are not included in the resulting strings</param>
+		/// <returns></returns>
 		public static List<string> SliceString (string s, char slicer)
 		{
 			List<string> parameters = new List<string>();
-			string temp = s;//.Substring(s.IndexOf(slicer) + 1);
+			string temp = s;
 			while (temp.Contains(slicer))
 			{
 				int spaceind = temp.IndexOf(slicer);
-				//Debug.Log("spaceInd of " + temp + " = " + spaceind);
 				if (spaceind > 0)
 				{
 					parameters.Add(temp.Substring(0, spaceind));
@@ -473,15 +584,14 @@ namespace RD
 			}
 			if (temp.Length > 0)
 				parameters.Add(temp);
-			int i = 0;
-			/*Debug.Log("s = " + s);
-		foreach (string str in parameters)
-		{
-			Debug.Log("Parameter" + i + " = " + str);
-			i++;
-		}*/
 			return parameters;
 		}
+
+		/// <summary>
+		/// Average value of <paramref name="values"/>
+		/// </summary>
+		/// <param name="values"></param>
+		/// <returns></returns>
 		public static float Average(List<float> values)
 		{
 			float sum = 0;
@@ -490,6 +600,14 @@ namespace RD
 			float average = sum / values.Count;
 			return average;
 		}
+
+		/// <summary>
+		/// Get a point in <paramref name="rt"/> space with <paramref name="pivot"/>. For example get lower left corner of an image.
+		/// </summary>
+		/// <param name="rt"></param>
+		/// <param name="pivot">(0,0) = bottom left, (1,1) = top right</param>
+		/// <param name="asScreen">World or screen point</param>
+		/// <returns></returns>
 		public static Vector2 GetRecttransformPivotPoint(RectTransform rt, Vector2 pivot, bool asScreen = true)
 		{
 			//(0,0) = bottom left, (1,1) = top right
@@ -507,6 +625,13 @@ namespace RD
 				pos = Camera.main.WorldToScreenPoint(pos);
 			return pos;
 		}
+
+		/// <summary>
+		/// Detect whether <paramref name="callBackContext"/> was a 'click' (and not continued hold down)
+		/// </summary>
+		/// <param name="callBackContext">The input Action to examine</param>
+		/// <param name="OnDown">If false, check if the key was released instead</param>
+		/// <returns>Whether the key was clicked or not</returns>
 		public static bool IsKeyClick(InputAction.CallbackContext callBackContext, bool OnDown = true)
 		{
 			//Use IsKeyClick for keyboard and IsMouseClick for mouse
@@ -516,6 +641,13 @@ namespace RD
 				return true;
 			return false;
 		}
+
+		/// <summary>
+		/// Detect whether <paramref name="callBackContext"/> was a 'click' (and not continued hold down)
+		/// </summary>
+		/// <param name="callBackContext">The input Action to examine</param>
+		/// <param name="OnDown">If false, check if the mouse button was released instead</param>
+		/// <returns>Whether the mouse was clicked or not</returns>
 		public static bool IsMouseClick(InputAction.CallbackContext callBackContext, bool OnDown = true)
 		{
 			//Use IsKeyClick for keyboard and IsMouseClick for mouse
@@ -526,6 +658,12 @@ namespace RD
 				return true;
 			return false;
 		}
+
+		/// <summary>
+		/// Remove all vowels from <paramref name="str"/>
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns><paramref name="str"/> without vowels</returns>
 		public static string RemoveVowels(string str)
 		{
 			if (str.Length < 1)
@@ -541,6 +679,12 @@ namespace RD
 			str = (upper ? str.Substring(0, 1).ToUpper() : str.Substring(0, 1).ToLower()) + str.Substring(1);
 			return str;
 		}
+
+		/// <summary>
+		/// Remove all Consonants from <paramref name="str"/>
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns><paramref name="str"/> without consonants</returns>
 		public static string RemoveConsonants(string str)
 		{
 			if (str.Length < 1)
@@ -556,9 +700,15 @@ namespace RD
 			str = (upper ? str.Substring(0, 1).ToUpper() : str.Substring(0, 1).ToLower()) + str.Substring(1);
 			return str;
 		}
+
+		/// <summary>
+		/// Capitalize the first letter in <paramref name="str"/>
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="reverse">If true. Make the first letter lower case instead</param>
+		/// <returns>Modified <paramref name="str"/></returns>
 		public static string Capitalize(string str,bool reverse = false)
 		{
-			//Debug.Log("Got " + str);
 			int firstLetter = 0;
 			char[] cstr = str.ToLower().ToCharArray();
 			for (int i = 0; i < cstr.Length; i++)
@@ -568,9 +718,14 @@ namespace RD
 				firstLetter++;
 			}
 			str = (firstLetter > 0 ? str.Substring(0, firstLetter) : "") + (!reverse ? str.Substring(firstLetter, 1).ToUpper() : str.Substring(firstLetter, 1).ToLower()) + (str.Length > firstLetter + 1 ? str.Substring(firstLetter + 1) : "");
-			//Debug.Log("Returning " + str);
 			return str;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="tasks"></param>
+		/// <returns>True if any of the <paramref name="tasks"/> are running, else false.</returns>
 		public static bool TasksAreRunning(List<Task> tasks)
 		{
 			foreach (Task t in tasks)
@@ -578,6 +733,13 @@ namespace RD
 					return true;
 			return false;
 		}
+
+		/// <summary>
+		/// Remove all nulls from <paramref name="list"/>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <returns><paramref name="list"/> without nulls</returns>
 		public static List<T> TrimNulls<T>(List<T> list)
 		{
 			if (list == null)
@@ -589,41 +751,74 @@ namespace RD
 			}
 			return list;
 		}
+
+		/// <summary>
+		/// Time class, allows scaling down UI or world time separately.
+		/// </summary>
 		public static class Tm
 		{
 			static float worldTime = 1;
 			static float UITime = 1;
 			static float globalTime = 1;
 			static float delta;
+			/// <summary>
+			/// Update deltaTime.
+			/// </summary>
+			/// <param name="t"></param>
 			public static void UpdateDelta(float t)
 			{
 				delta = t;
 			}
+			/// <summary>
+			/// Use in place of Time.deltaTime
+			/// </summary>
+			/// <returns></returns>
 			public static float GetWorldDelta()
 			{
 				return worldTime * delta;
 			}
+			/// <summary>
+			/// Use in place of Time.deltaTime
+			/// </summary>
+			/// <returns></returns>
 			public static float GetUIDelta()
 			{
 				return UITime * delta;
 			}
+			/// <summary>
+			/// Use in place of Time.deltaTime. Only the core functions like music, sounds and pause menu use global time.
+			/// </summary>
+			/// <returns></returns>
 			public static float GetGlobalDelta()
 			{
 				return globalTime * delta;
 			}
+			/// <summary>
+			/// Change Time Scale for World. Use in place of Time.timeScale
+			/// </summary>
+			/// <returns></returns>
 			public static void SetWorldTime(float t)
 			{
 				worldTime = t;
 			}
+			/// <summary>
+			/// Change Time Scale for UI. Use in place of Time.timeScale
+			/// </summary>
+			/// <returns></returns>
 			public static void SetUITime(float t)
 			{
 				UITime = t;
 			}
+			/// <summary>
+			/// Change Time Scale for global. Use in place of Time.timeScale
+			/// </summary>
+			/// <returns></returns>
 			public static void SetGlobalTime(float t)
 			{
 				globalTime = t;
 			}
 		}
+
 		/// <summary>
 		/// Rotate transform and return it to the original position. Returns the new (unused) position.
 		/// </summary>
@@ -637,6 +832,12 @@ namespace RD
 			t.position = oldPos;
 			return newPos;
 		}
+
+		/// <summary>
+		/// Create directory if it doesn't exist. Return true if the directory already exists.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns>True if directory already exists. Otherwise false.</returns>
 		public static bool CreateDirectoryIfNotExist(string path)
 		{
 			if (System.IO.Directory.Exists(path) == false)
@@ -646,6 +847,14 @@ namespace RD
 			}
 			return true;
 		}
+
+		/// <summary>
+		/// Move an item on list from <paramref name="oldIndex"/> to <paramref name="newIndex"/>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <param name="oldIndex"></param>
+		/// <param name="newIndex"></param>
 		public static void ListMove<T>(this List<T> list, int oldIndex, int newIndex)
 		{
 			var item = list[oldIndex];
@@ -681,6 +890,10 @@ namespace RD
 			B.SetSiblingIndex(bindex);
 			return pos;
 		}
+		/// <summary>
+		/// Get a random color that is atleast somewhat visible against the set background
+		/// </summary>
+		/// <param name="whiteBackground">if true, get a darker color, else get a brighter color</param>
 		public static Color GetRandomColor(bool whiteBackground = false)
 		{
 			float h = UnityEngine.Random.Range(0f, 1f);
@@ -688,22 +901,6 @@ namespace RD
 			float s = UnityEngine.Random.Range(0.15f, 0.9f);
 			Color c = Color.HSVToRGB(h, s, v);
 			return c;
-		}
-		public static Vector3 Vector3Divide(Vector3 a, Vector3 b)
-		{
-			Vector3 temp = new Vector3(); ;
-			temp.x = (b.x != 0 ? a.x / b.x : a.x);
-			temp.y = (b.y != 0 ? a.y / b.y : a.y);
-			temp.z = (b.z != 0? a.z / b.z : a.z);
-			return temp;
-		}
-		public static Vector3 Vector3Multiply(Vector3 a, Vector3 b)
-		{
-			Vector3 temp = new Vector3();
-			temp.x = a.x * b.x;
-			temp.y = a.y * b.y;
-			temp.z = a.z*b.z;
-			return temp;
 		}
 	}
 	public static class UIAnimationTools
@@ -1380,7 +1577,6 @@ namespace RD
 		}
 		static string FormPlural(string str)
 		{
-			Debug.Log("Forming plural from "+str);
 			string strLower = str.ToLower();
 			char lastChar = strLower.ToCharArray()[strLower.Length-1];
 			if (lastChar == 'y')
@@ -1390,7 +1586,6 @@ namespace RD
 				str = str + "e";
 			}
 			str = str + "s";
-			Debug.Log(str + " formed");
 			return str;
 		}
 		static string FormPossessive(string str)
@@ -1489,6 +1684,98 @@ namespace RD
 				else if (target.HasFlag(BaseCard.Target.Enemy) && !target.HasFlag(BaseCard.Target.Friend))
 					return "enemy";
 				else if (!target.HasFlag(BaseCard.Target.Enemy) && target.HasFlag(BaseCard.Target.Friend))
+					return "ally";
+				else
+					return "target";
+			}
+		}
+
+		/// <summary>
+		/// Replace target tags with proper words
+		/// [target]
+		/// [targeto] -> objective case
+		/// [target's]
+		/// [target is]
+		/// [target has]
+		/// </summary>
+		public static string TranslateTargetTag(string desc, BaseThought.TargetType tt, BaseThought.MultiTargetType multitargetType, bool secondMention = false, BaseThought.Target targetFlags = default)
+		{
+			bool self = tt == BaseThought.TargetType.Self;
+			bool plural = multitargetType == BaseThought.MultiTargetType.One;
+			if (GetTargetString(targetFlags) == "target" || self)
+			{
+				if (desc.Contains("[target]"))
+					desc = desc.Replace("[target]", self ? "you" : secondMention ? "they" : Plural());
+				if (desc.Contains("[targeto]"))
+					desc = desc.Replace("[targeto]", self ? "yourself" : secondMention ? "them" : Plural());
+				if (desc.Contains("[target's]"))
+					desc = desc.Replace("[target's]", self ? "your" : secondMention ? "their" : !plural ? "the target's" : "the targets'");
+				if (desc.Contains("[target is]"))
+					desc = desc.Replace("[target is]", self ? "you are" : secondMention ? "they are" : !plural ? "the target is" : "the targets are");
+				if (desc.Contains("[target has]"))
+					desc = desc.Replace("[target has]", self ? "you have" : secondMention ? "they have" : !plural ? "the target has" : "the targets have");
+				if (desc.Contains("[apply]"))
+					desc = desc.Replace("[apply]", self ? "gain" : "apply");
+			}
+			else
+			{
+				string foe = GetTargetString(targetFlags);
+				if (desc.Contains("[target]"))
+					desc = desc.Replace("[target]", secondMention ? "they" : Plural(foe));
+				if (desc.Contains("[targeto]"))
+					desc = desc.Replace("[targeto]", secondMention ? "them" : Plural(foe));
+
+				if (plural)
+					foe = FormPlural(foe);
+				foe = (secondMention ? "the " : "an ") + foe;
+				if (desc.Contains("[target's]"))
+					desc = desc.Replace("[target's]", secondMention ? "their" : FormPossessive(foe));
+				if (desc.Contains("[target is]"))
+					desc = desc.Replace("[target is]", secondMention ? "they are" : foe + (plural ? " are" : "is"));
+				if (desc.Contains("[target has]"))
+					desc = desc.Replace("[target has]", secondMention ? "they have" : foe + (plural ? " have" : "has"));
+				if (desc.Contains("[apply]"))
+					desc = desc.Replace("[apply]", "apply");
+			}
+			return desc;
+
+			string Plural(string tarString = "target")
+			{
+				switch (multitargetType)
+				{
+					default:
+					case BaseThought.MultiTargetType.One:
+						return Article(tarString) + tarString;
+					case BaseThought.MultiTargetType.Two:
+						return "two " + FormPlural(tarString);
+					case BaseThought.MultiTargetType.Three:
+						return "three " + FormPlural(tarString);
+					case BaseThought.MultiTargetType.All:
+						return "all " + FormPlural(tarString);
+
+				}
+			}
+			string Article(string str)
+			{
+				if (secondMention)
+					return "the ";
+				else
+				{
+					string strLower = str.ToLower();
+					char lastChar = strLower.ToCharArray()[strLower.Length - 1];
+					if (vowels.Contains(lastChar))
+						return "an ";
+					else
+						return "a ";
+				}
+			}
+			string GetTargetString(BaseThought.Target target)
+			{
+				if ((int)target == 1)
+					return "yourself";
+				else if (target.HasFlag(BaseThought.Target.Enemy) && !target.HasFlag(BaseThought.Target.Friend))
+					return "enemy";
+				else if (!target.HasFlag(BaseThought.Target.Enemy) && target.HasFlag(BaseThought.Target.Friend))
 					return "ally";
 				else
 					return "target";

@@ -56,7 +56,7 @@ namespace RD.UI
 					CreateButton("Dialog");
 					CreateButton("Combat");
 					CreateButton("Map");
-					CreateButton("Movement");
+					CreateButton("Mind");
 					CreateButton("Options");
 					break;
 				case MenuState.Options:
@@ -172,11 +172,12 @@ namespace RD.UI
 						catch { }
 					}
 					else
-						Debug.Log("Unknown button press");
+						Debug.Log("Unknown button press ("+s+")");
 					break;
 				case "map":
 					ToggleInteractions(false);
 					SceneHandler.EnterScene("map", new List<string> { "world map" });
+					//SceneHandler.EnterScene("Map", new List<string> {"dorosby" });
 					//StartCoroutine(LoadScene("Map", false));
 					//_state = MenuState.Map;
 					break;
@@ -208,9 +209,9 @@ namespace RD.UI
 					ToggleInteractions(false);
 					SceneHandler.EnterScene("dialog");
 					break;
-				case "movement":
+				case "mind":
 					ToggleInteractions(false);
-					SceneHandler.EnterScene("movement", new List<string> {"dorosby" });
+					SceneHandler.EnterScene("Mind", new List<string> {"dorosby" });
 					break;
 				case "camp":
 					if (GetComponent<TestTransition>())

@@ -6,6 +6,7 @@ namespace RD
 {
 	public class PostProcessingManager : MonoBehaviour
 	{
+		public static PostProcessingManager _current;
 		[Serializable]
 		public struct PPEffects {
 			public Volume _timeOfDay;
@@ -24,11 +25,14 @@ namespace RD
 		}
 		public PPEffects _postProcessingEffects;
 		public TimeOfDay _timeOfDay;
+		private void Awake()
+		{
+			_current = this;
+		}
 		// Start is called before the first frame update
 		private void Start()
 		{
 			Normalize();
-			CodeTools.SetPostProcessingManager(this);
 		}
 		public void Normalize()
 		{

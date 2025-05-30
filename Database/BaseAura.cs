@@ -45,9 +45,9 @@ namespace RD.DB
 		//---------------------Effects------------
 		public List<PowerEffect> _tickEffects = new List<PowerEffect>();
 		//----------Card Modification--------------
-		public BaseEffect.CardModification _cardModification = new BaseEffect.CardModification(true);
+		//public BaseEffect.CardModification _cardModification = new BaseEffect.CardModification(true);
 		//-----------Card Management-------------------------
-		public BaseEffect.CardManagement _cardManagement = new BaseEffect.CardManagement(true);
+		//public BaseEffect.CardManagement _cardManagement = new BaseEffect.CardManagement(true);
 		//----------------Misc
 		public CodeTools.Polarity _polarity = CodeTools.Polarity.Neutral;
 		//public bool _negative;
@@ -64,7 +64,7 @@ namespace RD.DB
 		}
 		public BaseAura()
 		{
-			_layOutSpace = new LayOutSpace(new List<int> { 4, 5, 7, 1, 1, 1 }, new List<string> { "Time and Triggering", "Numbers","Effects", "Card Modification", "Card Management", "General" });
+			_layOutSpace = new LayOutSpace(new List<int> { 4, 5, 7, 1 }, new List<string> { "Time and Triggering", "Numbers","Effects", "General" });
 		}
 		public string GetFlowingDescription()
 		{

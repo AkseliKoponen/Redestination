@@ -40,12 +40,12 @@ namespace RD.Combat
 		}
 		private void Awake()
 		{
-			CodeTools.SetCombatManager(this);
 			_current = this;
 			CreateArenas();
 		}
 		public void StartCombat()
 		{
+			Damage._globalID = 0;
 			GUIAnimationManager.Reset();
 			_continueCombat = true;
 			ExpandBottomBar(false);

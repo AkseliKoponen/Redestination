@@ -48,7 +48,6 @@ namespace RD.Combat
 		bool debug = false;
 		private void Awake()
 		{
-			SetCombatGUI(this);
 			_UICamera = Cameras._uiCamera;
 			GetComponent<Canvas>().worldCamera = _UICamera;
 		}
